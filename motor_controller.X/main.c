@@ -8,7 +8,9 @@
 #include <stdlib.h>
 #include "p24Hxxxx.h"
 #include "pwm_drive.h"
-//#include <InCap.h>
+#include "encoder_feedback.h"
+#include "sleep_timer.h"
+#include "pps.h"
 
 /*
  * Pinout
@@ -32,10 +34,23 @@
 int main(int argc, char** argv) {
     //RCONbits.SWDTEN = 0;
 
-    configure_drive();
-    left_drive(200, 1);
-    right_drive(200, 0);
+    // Configure pin out
+    PPSUnLock;
+    // map output compare to our pwm pins
+    PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP2);
+    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP3);
+    PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP12);
+    PPSOutput(OUT_FN_PPS_OC4, OUT_PIN_PPS_RP13);
 
+    //map input compare to out encoder feedback pins
+    PPSInput(IN_FN_PPS_IC1, IN_PIN_PPS_RP5);
+    PPSLock;
+
+    configure_drive();
+    configure_encoders();
+    //left_drive(100, 0);
+    //sleep(0xffff);
+    //right_drive(100, 0);
     while(1)
     {
         Idle()

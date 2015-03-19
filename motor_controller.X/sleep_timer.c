@@ -1,7 +1,7 @@
 #include <timer.h>
 
 int timer_flag = 0; // TODO read the register instead of using global
-void __attribute__((__interrupt__)) _T1Interrupt(void){
+void __attribute__((__interrupt__, no_auto_psv)) _T1Interrupt(void){
     timer_flag = 1;
     IFS0bits.T1IF = 0;
 }

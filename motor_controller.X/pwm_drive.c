@@ -1,5 +1,4 @@
 #include "p24Hxxxx.h"
-#include "pps.h"
 #include "outcompare.h"
 
 //PWM configuration
@@ -46,16 +45,8 @@ void configure_drive(){
     right_direction(0);
     left_direction(0);
 
-    // Configure pin out
-    PPSUnLock;
-    // map output compare to our pwm pins
-    PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP2);
-    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP3);
-    PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP12);
-    PPSOutput(OUT_FN_PPS_OC4, OUT_PIN_PPS_RP13);
-    PPSLock;
-
     //Configure timer for PWM
+    // TODO use OpenTimer()
     PR2 = 0x00ff;
     IPC1bits.T2IP = 1;
     IFS0bits.T2IF = 0;

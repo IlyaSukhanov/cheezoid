@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>pwm_drive.h</itemPath>
       <itemPath>sleep_timer.h</itemPath>
+      <itemPath>encoder_feedback.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
