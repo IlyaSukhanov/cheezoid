@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=pwm.c
+SOURCEFILES_QUOTED_IF_SPACED=pwm_drive.c main.c sleep_timer.c encoder_feedback.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pwm.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/pwm.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/pwm_drive.o ${OBJECTDIR}/main.o ${OBJECTDIR}/sleep_timer.o ${OBJECTDIR}/encoder_feedback.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/pwm_drive.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/sleep_timer.o.d ${OBJECTDIR}/encoder_feedback.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/pwm.o
+OBJECTFILES=${OBJECTDIR}/pwm_drive.o ${OBJECTDIR}/main.o ${OBJECTDIR}/sleep_timer.o ${OBJECTDIR}/encoder_feedback.o
 
 # Source Files
-SOURCEFILES=pwm.c
+SOURCEFILES=pwm_drive.c main.c sleep_timer.c encoder_feedback.c
 
 
 CFLAGS=
@@ -82,20 +82,62 @@ MP_LINKER_FILE_OPTION=,--script=p24HJ64GP502.gld
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/pwm.o: pwm.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/pwm_drive.o: pwm_drive.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm.c  -o ${OBJECTDIR}/pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm.o.d"      -g -D__DEBUG     -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	@${RM} ${OBJECTDIR}/pwm_drive.o.d 
+	@${RM} ${OBJECTDIR}/pwm_drive.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm_drive.c  -o ${OBJECTDIR}/pwm_drive.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm_drive.o.d"      -g -D__DEBUG     -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/pwm_drive.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	@${RM} ${OBJECTDIR}/main.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"      -g -D__DEBUG     -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/sleep_timer.o: sleep_timer.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/sleep_timer.o.d 
+	@${RM} ${OBJECTDIR}/sleep_timer.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  sleep_timer.c  -o ${OBJECTDIR}/sleep_timer.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sleep_timer.o.d"      -g -D__DEBUG     -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/sleep_timer.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/encoder_feedback.o: encoder_feedback.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/encoder_feedback.o.d 
+	@${RM} ${OBJECTDIR}/encoder_feedback.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  encoder_feedback.c  -o ${OBJECTDIR}/encoder_feedback.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/encoder_feedback.o.d"      -g -D__DEBUG     -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/encoder_feedback.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 else
-${OBJECTDIR}/pwm.o: pwm.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/pwm_drive.o: pwm_drive.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/pwm.o.d 
-	@${RM} ${OBJECTDIR}/pwm.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm.c  -o ${OBJECTDIR}/pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm.o.d"        -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	@${RM} ${OBJECTDIR}/pwm_drive.o.d 
+	@${RM} ${OBJECTDIR}/pwm_drive.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  pwm_drive.c  -o ${OBJECTDIR}/pwm_drive.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwm_drive.o.d"        -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/pwm_drive.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/main.o.d 
+	@${RM} ${OBJECTDIR}/main.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  main.c  -o ${OBJECTDIR}/main.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/main.o.d"        -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/main.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/sleep_timer.o: sleep_timer.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/sleep_timer.o.d 
+	@${RM} ${OBJECTDIR}/sleep_timer.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  sleep_timer.c  -o ${OBJECTDIR}/sleep_timer.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/sleep_timer.o.d"        -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/sleep_timer.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/encoder_feedback.o: encoder_feedback.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/encoder_feedback.o.d 
+	@${RM} ${OBJECTDIR}/encoder_feedback.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  encoder_feedback.c  -o ${OBJECTDIR}/encoder_feedback.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/encoder_feedback.o.d"        -g -omf=elf -O0 -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/encoder_feedback.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 
