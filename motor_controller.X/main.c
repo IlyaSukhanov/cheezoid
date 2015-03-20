@@ -32,14 +32,14 @@
  */
 
 int main(int argc, char** argv) {
-    //RCONbits.SWDTEN = 0;
+    RCONbits.SWDTEN = 0;
 
     // Configure pin out
     PPSUnLock;
     // map output compare to our pwm pins
     PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP2);
-    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP3);
-    PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP12);
+    PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP3);
+    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP12);
     PPSOutput(OUT_FN_PPS_OC4, OUT_PIN_PPS_RP13);
 
     //map input compare to out encoder feedback pins
@@ -47,10 +47,10 @@ int main(int argc, char** argv) {
     PPSLock;
 
     configure_drive();
-    configure_encoders();
+    //configure_encoders();
     //left_drive(100, 0);
     //sleep(0xffff);
-    //right_drive(100, 0);
+    //right_drive(50, 0);
     while(1)
     {
         Idle()

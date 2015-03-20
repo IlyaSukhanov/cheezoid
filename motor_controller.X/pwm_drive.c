@@ -8,8 +8,8 @@ void inline right_direction(unsigned int direction){
     if ( direction > 0 ){
         direction = 1;
     }
-        LATAbits.LATA2 = direction;
-        LATBbits.LATB4 = direction;
+    LATAbits.LATA2 = direction;
+    LATBbits.LATB4 = direction;
 }
 
 void inline left_direction(unsigned int direction){
@@ -42,8 +42,8 @@ void configure_drive(){
     TRISBbits.TRISB4 = 0;
     TRISBbits.TRISB14 = 0;
     TRISBbits.TRISB15 = 0;
-    right_direction(0);
     left_direction(0);
+    right_direction(0);
 
     //Configure timer for PWM
     // TODO use OpenTimer()
@@ -55,15 +55,15 @@ void configure_drive(){
 }
 
 
-void left_drive(unsigned int speed, unsigned int direction){
-    left_direction(direction);
-    OpenOC1(OC_PWM_CONFIG, speed, speed);
-    OpenOC2(OC_PWM_CONFIG, speed, speed);
-}
-
 void right_drive(unsigned int speed, unsigned int direction){
     right_direction(direction);
+    OpenOC1(OC_PWM_CONFIG, speed, speed);
     OpenOC3(OC_PWM_CONFIG, speed, speed);
+}
+
+void left_drive(unsigned int speed, unsigned int direction){
+    left_direction(direction);
+    OpenOC2(OC_PWM_CONFIG, speed, speed);
     OpenOC4(OC_PWM_CONFIG, speed, speed);
 }
 

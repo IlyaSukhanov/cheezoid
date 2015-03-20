@@ -28,10 +28,10 @@ void configure_encoders(){
 
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
     ReadCapture1(&encoder1_times[0]);
-    //if (encoder1_times[0] - encoder1_times[0] > 10){
-    //    right_drive(0,0);
-    //}else{
+    if (encoder1_times[0] - encoder1_times[1] < 20000){
         right_drive(100,0);
-    //}
+    }else{
+        right_drive(0,0);
+    }
     IFS0bits.IC1IF = 0;
 }
