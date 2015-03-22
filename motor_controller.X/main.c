@@ -16,19 +16,23 @@
  * Pinout
  * pin4     ????? occupied by microstick debugger
  * pin5     ????? occupied by microstick debugger
- * pin6     right front motor speed     (channel 1)
- * pin7     right rear motor speed      (channel 3)
- * pin9     right front motor direction (channel 1)
+ * pin6     RF motor speed  OC1 (channel 1)
+ * pin7     RR motor speed  OC3 (channel 3)
+ * pin9     RF motor direction  (channel 1)
  * pin10    ???? won't flip bit
- * pin14    right front encoder 5V      (channel 1)
- * pin15    right front encoder 5V      (channel 2)
- * pin16    right front encoder 5V      (channel 3)
- * pin17    right front encoder 5V      (channel 4)
- * pin11    right rear motor direction  (channel 3)
- * pin23    left front motor speed      (channel 2)
- * pin24    left rear motor speed       (channel 4)
- * pin25    left front motor direction  (channel 2)
- * pin26    left read motor direction   (channel 4)
+ * pin14    RF encoder 5V   IC1 (channel 1)
+ * pin15    LF encoder 5V   IC2 (channel 2)
+ * pin16    RR encoder 5V   IC7 (channel 3)
+ * pin17    LR encoder 5V   IC8 (channel 4)
+ * pin11    RR motor direction  (channel 3)
+ * pin23    LF motor speed  OC2 (channel 2)
+ * pin24    RR motor speed  OC4 (channel 4)
+ * pin25    LF motor direction  (channel 2)
+ * pin26    LR motor direction  (channel 4)
+ * ?????    MOSI SPI red
+ * ?????    MISO SPI orange
+ * ?????    SCLK SPI yellow
+ * ?????    CEO  SPI gray
  */
 
 int main(int argc, char** argv) {
@@ -44,13 +48,31 @@ int main(int argc, char** argv) {
 
     //map input compare to out encoder feedback pins
     PPSInput(IN_FN_PPS_IC1, IN_PIN_PPS_RP5);
+    PPSInput(IN_FN_PPS_IC2, IN_PIN_PPS_RP6);
+    PPSInput(IN_FN_PPS_IC7, IN_PIN_PPS_RP7);
+    PPSInput(IN_FN_PPS_IC8, IN_PIN_PPS_RP8);
     PPSLock;
 
     configure_drive();
-    //configure_encoders();
-    //left_drive(100, 0);
+    configure_encoders();
+    // 48 interrupts per wheel rotation
+    //left_speed(250, 0);
     //sleep(0xffff);
-    //right_drive(50, 0);
+    //right_speed(250, 0);
+    int i = 0;
+    while(i<10){
+        left_drive(48,0);
+        right_drive(48, 0);
+        while(is_drive_active()){
+            Idle();
+        }
+        left_drive(48,1);
+        right_drive(48,1);
+        while(is_drive_active()){
+            Idle();
+        }
+        i++;
+    }
     while(1)
     {
         Idle()

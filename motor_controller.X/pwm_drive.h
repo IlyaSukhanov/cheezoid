@@ -10,7 +10,16 @@
 
 void inline left_direction(unsigned int direction);
 void inline right_direction(unsigned int direction);
+void inline left_drive(unsigned int distance, unsigned int direction);
+void inline right_drive(unsigned int distance, unsigned int direction);
+void inline left_speed(unsigned int speed, unsigned int direction);
+void inline right_speed(unsigned int speed, unsigned int direction);
 void configure_drive();
+unsigned int right_distance_remaining(unsigned int travel);
+unsigned int left_distance_remaining(unsigned int travel);
+unsigned int is_drive_active();
+void right_stop();
+void right_stop();
 
 
 #ifdef	__cplusplus
