@@ -82,3 +82,45 @@ After installing xc16 check out `peripheral library documentation`_
 
 .. _mplabx: http://www.microchip.com/mplabx-ide-linux-installer
 .. _peripheral library documentation: file:///opt/microchip/xc16/v1.24/docs/periph_libs/16-bit%20Peripheral%20Libraries.htm#PIC24H
+
+RaspberryPi initialization
+--------------------------
+On RaspberryPI we're using Raspbian_ distro.
+
+The following additional configuration has been performed through raspi-config:
+
+ * Enable SPI & drivers set to load on boot
+ 
+ * Enable I2C & drivers set to load on boot
+ 
+ * Enable Camera Module
+
+Following packages have been installed:
+
+ * Creature comforts ``apt-get install vim git fish ipython python-setuptools``
+
+ * SimpleCV & dependencies:
+
+   + ``apt-get install ipython python-opencv python-scipy python-numpy python-setuptools python-pip``
+
+   + ``pip install https://github.com/sightmachine/SimpleCV/zipball/master``
+
+   + ``pip install svgwrite``
+
+ * i2c requirements ``apt-get install python-smbus i2c-tools``
+
+Additional OS config has been performed:
+
+  * ``/etc/hostname`` changed to cheezoid
+ 
+  * sshd password login disabled
+  
+  * `wpa_supplicant configured`_ & wlan0 has been configured as follows::
+   
+     allow-hotplug wlan0
+     iface wlan0 inet manual
+     wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+     iface default inet dhcp
+
+.. _wpa_supplicant configured: http://w1.fi/cgit/hostap/plain/wpa_supplicant/wpa_supplicant.conf
+.. _Raspbian: http://www.raspbian.org/
