@@ -11,16 +11,5 @@
 void configure_encoders();
 unsigned int enc_flag_check();
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
-
 #endif	/* ENCODER_FEEDBACK_H */
 

@@ -7,6 +7,7 @@
       <itemPath>pwm_drive.h</itemPath>
       <itemPath>sleep_timer.h</itemPath>
       <itemPath>encoder_feedback.h</itemPath>
+      <itemPath>command_control.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -18,6 +19,7 @@
       <itemPath>pwm_drive.c</itemPath>
       <itemPath>sleep_timer.c</itemPath>
       <itemPath>encoder_feedback.c</itemPath>
+      <itemPath>command_control.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

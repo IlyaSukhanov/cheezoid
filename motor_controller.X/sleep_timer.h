@@ -10,16 +10,5 @@
 
 void sleep(unsigned int duration);
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef	__cplusplus
-}
-#endif
-
 #endif	/* SLEEP_TIMER_H */
 

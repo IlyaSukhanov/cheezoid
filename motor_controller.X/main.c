@@ -11,6 +11,7 @@
 #include "encoder_feedback.h"
 #include "sleep_timer.h"
 #include "pps.h"
+#include "command_control.h"
 
 /*
  * Pinout
@@ -20,19 +21,19 @@
  * pin7     RR motor speed  OC3 (channel 3)
  * pin9     RF motor direction  (channel 1)
  * pin10    ???? won't flip bit
+ * pin11    RR motor direction  (channel 3)
  * pin14    RF encoder 5V   IC1 (channel 1)
  * pin15    LF encoder 5V   IC2 (channel 2)
  * pin16    RR encoder 5V   IC7 (channel 3)
  * pin17    LR encoder 5V   IC8 (channel 4)
- * pin11    RR motor direction  (channel 3)
+ * pin18    SPI SCLK yellow     RP9
+ * pin21    SPI MOSI red        RP10
+ * pin22    SPI MISO orange     RP11
+ * ?????    SPI CE0  green      NOT USED
  * pin23    LF motor speed  OC2 (channel 2)
  * pin24    RR motor speed  OC4 (channel 4)
  * pin25    LF motor direction  (channel 2)
  * pin26    LR motor direction  (channel 4)
- * ?????    MOSI SPI red
- * ?????    MISO SPI orange
- * ?????    SCLK SPI yellow
- * ?????    CEO  SPI gray
  */
 
 int main(int argc, char** argv) {
@@ -51,14 +52,19 @@ int main(int argc, char** argv) {
     PPSInput(IN_FN_PPS_IC2, IN_PIN_PPS_RP6);
     PPSInput(IN_FN_PPS_IC7, IN_PIN_PPS_RP7);
     PPSInput(IN_FN_PPS_IC8, IN_PIN_PPS_RP8);
+
+    //Map SPI pins
+    PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP11);
+    PPSInput(IN_FN_PPS_SDI1, IN_PIN_PPS_RP10);
+    PPSInput(IN_FN_PPS_SCK1, IN_PIN_PPS_RP9);
     PPSLock;
 
     configure_drive();
     configure_encoders();
+    configure_command_control();
+
     // 48 interrupts per wheel rotation
-    //left_speed(250, 0);
-    //sleep(0xffff);
-    //right_speed(250, 0);
+    /*
     int i = 0;
     while(i<10){
         left_drive(48,0);
@@ -73,6 +79,7 @@ int main(int argc, char** argv) {
         }
         i++;
     }
+    */
     while(1)
     {
         Idle()

@@ -1,7 +1,6 @@
 #include "p24Hxxxx.h"
 #include "incap.h"
 #include "pwm_drive.h"
-#include "timer.h"
 #include "encoder_feedback.h"
 
 //Configure Encoders

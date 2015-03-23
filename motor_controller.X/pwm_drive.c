@@ -25,7 +25,7 @@ void inline left_direction(unsigned int direction){
 }
 
 // Handle interrupt for PWM timer
-void __attribute__ ((__interrupt__)) _T2Interrupt(void){
+void __attribute__ ((__interrupt__, no_auto_psv)) _T2Interrupt(void){
     IFS0bits.T2IF = 0;
 }
 
