@@ -1,8 +1,11 @@
+#include <stdlib.h>
 #include "p24Hxxxx.h"
 #include "outcompare.h"
 
 //PWM configuration
 #define OC_PWM_CONFIG OC_IDLE_CON & OC_TIMER2_SRC & OC_PWM_FAULT_PIN_DISABLE
+#define MIN_SPEED 50
+#define NOMINAL_SPEED 200
 unsigned int right_distance = 0;
 unsigned int left_distance = 0;
 unsigned int right_drive_active = 0;
@@ -59,14 +62,18 @@ void configure_drive(){
 }
 
 
-void right_speed(unsigned int speed, unsigned int direction){
-    right_direction(direction);
+void right_speed(int speed){
+    right_direction(speed < 0);
+    if(abs(speed) < MIN_SPEED)
+        speed = 0;
     OpenOC1(OC_PWM_CONFIG, speed, speed);
     OpenOC3(OC_PWM_CONFIG, speed, speed);
 }
 
-void left_speed(unsigned int speed, unsigned int direction){
-    left_direction(direction);
+void left_speed(int speed){
+    left_direction(speed < 0);
+    if(abs(speed) < MIN_SPEED)
+        speed = 0;
     OpenOC2(OC_PWM_CONFIG, speed, speed);
     OpenOC4(OC_PWM_CONFIG, speed, speed);
 }
@@ -78,29 +85,37 @@ unsigned int is_drive_active(){
 void right_stop(){
     // TODO keep direction opposite of 'down',  I gues thats 'up'
     right_drive_active = 0;
-    right_speed(0,0);
+    right_speed(0);
 }
 
 void left_stop(){
     // TODO keep direction opposite of 'down', I guess thats 'up'
     left_drive_active = 0;
-    left_speed(0,0);
+    left_speed(0);
 }
 
-void left_drive(unsigned int distance, unsigned int direction){
+void left_drive(int distance){
     // TODO reset interrupt FIFO?
     // TODO multiply by 2 so we don't need to divide in interrupt handler
-    left_drive_active = 1;
-    left_distance = distance;
-    left_speed(200, direction);
+    left_distance = abs(distance);
+    left_drive_active = left_distance>0;
+    if(distance<0){
+        left_speed(-NOMINAL_SPEED);
+    }else{
+        left_speed(NOMINAL_SPEED);
+    }
 }
 
-void right_drive(unsigned int distance, unsigned int direction){
+void right_drive(int distance){
     // TODO reset interrupt FIFO?
     // TODO multiply by 2 so we don't need to divide in interrupt handler
-    right_drive_active = 1;
-    right_distance = distance;
-    right_speed(200, direction);
+    right_distance = abs(distance);
+    right_drive_active = right_distance>0;
+    if(distance<0){
+        right_speed(-NOMINAL_SPEED);
+    }else{
+        right_speed(NOMINAL_SPEED);
+    }
 }
 
 unsigned int right_distance_remaining(unsigned int travel){
@@ -115,8 +130,23 @@ unsigned int right_distance_remaining(unsigned int travel){
 unsigned int left_distance_remaining(unsigned int travel){
     if (travel < left_distance){
         left_distance -= travel;
-    }else{
+    } else {
         left_distance = 0;
     }
     return left_distance;
+}
+
+void move_to(int rotate_distance, int drive_distance){
+    if(rotate_distance != 0){
+        left_drive(-rotate_distance);
+        right_drive(rotate_distance);
+        //while(is_drive_active());
+    }
+    /*
+    if (drive_distance != 0){
+        left_drive(drive_distance);
+        right_drive(drive_distance);
+        while(is_drive_active());
+    }
+     */
 }

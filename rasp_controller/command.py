@@ -1,29 +1,25 @@
 import spidev
 import time
+import struct
 
 class OutOfBoundsError(RuntimeError):
-	pass
+    pass
 
 SPI_BUS = 0
 SPI_DEVICE = 0
-FORWARD = 1
-BACKWARD = 2
 
 class CheezoidDrive():
-	def __init__(self):
-		self.spi_bus = spidev.SpiDev()
-		self.spi_bus.open(SPI_BUS, SPI_DEVICE)
+    def __init__(self):
+        self.spi_bus = spidev.SpiDev()
+        self.spi_bus.open(SPI_BUS, SPI_DEVICE)
 
-	def drive(self, distance, direction):
-		if distance > 0x7f:
-			raise OutOfBoundsError("Exceeded maximum distance")
-		if direction == FORWARD:
-			self.spi_bus.xfer([distance])
-		elif direction == BACKWARD:
-			self.spi_bus.xfer([0x80 & distance])
+    def move(self, rotation_distance, drive_distance):
+        data = bytearray(struct.pack( "<h", rotation_distance))
+        data.extend(bytearray(struct.pack( "<h", drive_distance)))
+        self.spi_bus.xfer(data)
 
 if __name__ == "__main__":
-	drive = CheezoidDrive()
-	drive.drive(0x7f, FORWARD)
-	time.sleep(1)
+    drive = CheezoidDrive()
+    drive.move(10, 10)
+    time.sleep(1)
 

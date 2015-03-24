@@ -80,6 +80,7 @@ int main(int argc, char** argv) {
         i++;
     }
     */
+    //move_to(50,0);
     while(1)
     {
         Idle()
