@@ -15,6 +15,8 @@
 
 /*
  * Pinout
+ * pin2     LF motor direction  (channel 2)
+ * pin3     LR motor direction  (channel 4)
  * pin4     ????? occupied by microstick debugger
  * pin5     ????? occupied by microstick debugger
  * pin6     RF motor speed  OC1 (channel 1)
@@ -29,11 +31,10 @@
  * pin18    SPI SCLK yellow     RP9
  * pin21    SPI MOSI red        RP10
  * pin22    SPI MISO orange     RP11
- * ?????    SPI CE0  green      NOT USED
+ * pin25    SPI CE0  green      RP14
  * pin23    LF motor speed  OC2 (channel 2)
  * pin24    RR motor speed  OC4 (channel 4)
- * pin25    LF motor direction  (channel 2)
- * pin26    LR motor direction  (channel 4)
+
  */
 
 int main(int argc, char** argv) {
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 
     // Configure pin out
     PPSUnLock;
-    // map output compare to our pwm pins
+    // map output compare to our pwm drive pins
     PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP2);
     PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP3);
     PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP12);
@@ -57,30 +58,13 @@ int main(int argc, char** argv) {
     PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP11);
     PPSInput(IN_FN_PPS_SDI1, IN_PIN_PPS_RP10);
     PPSInput(IN_FN_PPS_SCK1, IN_PIN_PPS_RP9);
+    PPSInput(IN_FN_PPS_SS1, IN_PIN_PPS_RP14);
     PPSLock;
 
     configure_drive();
     configure_encoders();
     configure_command_control();
 
-    // 48 interrupts per wheel rotation
-    /*
-    int i = 0;
-    while(i<10){
-        left_drive(48,0);
-        right_drive(48, 0);
-        while(is_drive_active()){
-            Idle();
-        }
-        left_drive(48,1);
-        right_drive(48,1);
-        while(is_drive_active()){
-            Idle();
-        }
-        i++;
-    }
-    */
-    //move_to(50,0);
     while(1)
     {
         Idle()

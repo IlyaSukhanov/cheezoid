@@ -5,7 +5,7 @@
 //PWM configuration
 #define OC_PWM_CONFIG OC_IDLE_CON & OC_TIMER2_SRC & OC_PWM_FAULT_PIN_DISABLE
 #define MIN_SPEED 50
-#define NOMINAL_SPEED 200
+#define NOMINAL_SPEED 60
 unsigned int right_distance = 0;
 unsigned int left_distance = 0;
 unsigned int right_drive_active = 0;
@@ -23,8 +23,8 @@ void inline left_direction(unsigned int direction){
     if ( direction > 0 ){
         direction = 1;
     }
-    LATBbits.LATB14 = direction;
-    LATBbits.LATB15 = direction;
+    LATAbits.LATA0 = direction;
+    LATAbits.LATA1 = direction;
 }
 
 // Handle interrupt for PWM timer
@@ -47,8 +47,8 @@ void configure_drive(){
     //Configure direction pins for output
     TRISAbits.TRISA2 = 0;
     TRISBbits.TRISB4 = 0;
-    TRISBbits.TRISB14 = 0;
-    TRISBbits.TRISB15 = 0;
+    TRISAbits.TRISA0 = 0;
+    TRISAbits.TRISA1 = 0;
     left_direction(0);
     right_direction(0);
 
@@ -63,7 +63,7 @@ void configure_drive(){
 
 
 void right_speed(int speed){
-    right_direction(speed < 0);
+    right_direction(speed > 0);
     if(abs(speed) < MIN_SPEED)
         speed = 0;
     OpenOC1(OC_PWM_CONFIG, speed, speed);
@@ -71,7 +71,7 @@ void right_speed(int speed){
 }
 
 void left_speed(int speed){
-    left_direction(speed < 0);
+    left_direction(speed > 0);
     if(abs(speed) < MIN_SPEED)
         speed = 0;
     OpenOC2(OC_PWM_CONFIG, speed, speed);
@@ -136,17 +136,15 @@ unsigned int left_distance_remaining(unsigned int travel){
     return left_distance;
 }
 
-void move_to(int rotate_distance, int drive_distance){
+void move(int rotate_distance, int drive_distance){
     if(rotate_distance != 0){
         left_drive(-rotate_distance);
         right_drive(rotate_distance);
-        //while(is_drive_active());
+        while(is_drive_active());
     }
-    /*
     if (drive_distance != 0){
         left_drive(drive_distance);
         right_drive(drive_distance);
         while(is_drive_active());
     }
-     */
 }

@@ -20,7 +20,7 @@ unsigned int left_distance_remaining(unsigned int travel);
 unsigned int is_drive_active();
 void right_stop();
 void left_stop();
-void move_to(int rotate_distance, int drive_distance);
+void move(int rotate_distance, int drive_distance);
 
 #endif	/* PWM_DRIVE_H */
 
