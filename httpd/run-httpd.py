@@ -40,7 +40,7 @@ def hello():
 def cmd_process():
     global fifo
     if request.method == 'GET':
-        return "cmd\n"
+        return "Please use POST\n"
     elif request.method == 'POST':
         cmd_repl(fifo, request.data)
         return "%s\n" % (request.data)
