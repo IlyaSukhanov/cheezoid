@@ -34,5 +34,17 @@ def cmd_process():
     cmd_repl(fifo)
     return "here"
 
+@app.route("/status")
+def status_process():
+    return "status"
+
+@app.route("/svg")
+def svg_process():
+    return "svg"
+
+@app.route("/canvas")
+def canvas_process():
+    return "canvas"
+
 if __name__ == "__main__":
     app.run()
