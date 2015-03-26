@@ -26,7 +26,10 @@ def main():
     while(RUNNING):
         line = fifo.readline()  # blocking
         cmd = line.strip()
-        do_cmd(cmd)
+        if cmd != "":
+            do_cmd(cmd)
+        else:
+            time.sleep(1)
     fifo.close()
 
 
