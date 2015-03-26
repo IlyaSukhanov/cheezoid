@@ -1,7 +1,10 @@
 from flask import Flask
+from cmd import cmd_repl, create_fifo, PIPENAME
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
+fifo = create_fifo(PIPENAME)
 
 @app.route("/")
 def hello():
@@ -24,6 +27,12 @@ def hello():
     </html>
 """
     return msg
+
+@app.route("/cmd")
+def cmd_process():
+    global fifo
+    cmd_repl(fifo)
+    return "here"
 
 if __name__ == "__main__":
     app.run()
