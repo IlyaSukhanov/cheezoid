@@ -1,5 +1,4 @@
 from RPIO import PWM
-import time
 
 PEN_UP_PWM_TIME = 600
 GPIO_PIN = 17
@@ -22,5 +21,9 @@ class CheezoidPenUp():
         self.pen_servo.stop_servo(GPIO_PIN)
 
 if __name__ == "__main__":
+    """
+    Lift pen for 5 seconds.
+    """
+    import time
     with CheezoidPenUp() as pen:
         time.sleep(5)
