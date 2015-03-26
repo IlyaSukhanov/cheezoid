@@ -16,6 +16,10 @@ def hello():
     <code>
     curl -X POST --data 'reset' -H 'Content-type: text/plain' localhost:5000/cmd
     </code>
+    or <br>
+    <code>
+    curl -X POST --data 'reset\n pen down\n move (13, 97)\n pen up' -H 'Content-type: text/plain' localhost:5000/cmd
+    </code>
     <ul>
     <li>/status to view cheezoid status</li>
     <li>/cmd to send command</li>
