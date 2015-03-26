@@ -1,4 +1,5 @@
 import time
+import datetime
 import os
 import sys
 
@@ -22,6 +23,7 @@ def create_fifo(pipename):
     return fifo
 
 def do_cmd(cmd):
+    print(datetime.datetime.now())
     print("Executing: %s" % cmd)
     sys.stdout.flush()
 
