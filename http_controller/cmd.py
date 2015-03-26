@@ -12,5 +12,5 @@ def create_fifo(pipename):
 
 def cmd_repl(fifo):
     fifo = create_fifo(PIPENAME)
-    fifo.write('resett')
+    fifo.write('reset\n')
     print('in cmd module')
