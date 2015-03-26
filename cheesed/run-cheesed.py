@@ -1,8 +1,7 @@
 import time
-import sys
-import signal
 import os
-import stat
+import sys
+
 
 RUNNING = True
 PIPENAME = "/tmp/cheese_plate"
@@ -17,11 +16,14 @@ def create_fifo(pipename):
     else:
         os.chmod(pipename, 0666)
     print "Reading commands from: %s" % pipename
-    fifo = open(pipename, 'r')
+    sys.stdout.flush()
+    fd = os.open(pipename, os.O_RDWR)
+    fifo = os.fdopen(fd, 'r')
     return fifo
 
 def do_cmd(cmd):
-    print "Executing: %s" % cmd
+    print("Executing: %s" % cmd)
+    sys.stdout.flush()
 
 def main():
     fifo = create_fifo(PIPENAME)

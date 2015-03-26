@@ -1,15 +1,15 @@
 from flask import Flask, request
 from cmd import cmd_repl, create_fifo, PIPENAME
 import socket
+import sys
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-fifo = create_fifo(PIPENAME)
-hostname = socket.gethostname()
 
 @app.route("/")
 def hello():
+    hostname = socket.gethostname()
     msg = """
     <html><head><title>Cheezoid</title></head>
     <body><h3>cheezoid httpd controller</h3>
@@ -44,8 +44,8 @@ def cmd_process():
     if request.method == 'GET':
         return "Please use POST\n"
     elif request.method == 'POST':
-        cmd_repl(fifo, request.data)
-        return "%s\n" % (request.data)
+        cmds = cmd_repl(fifo, request.data)
+        return "%s\n" % ("\n".join(cmds))
 
 @app.route("/status")
 def status_process():
@@ -60,5 +60,7 @@ def canvas_process():
     return "canvas"
 
 if __name__ == "__main__":
+    global fifo
+    fifo = create_fifo(PIPENAME)
     app.run(host="0.0.0.0")
     fifo.close()

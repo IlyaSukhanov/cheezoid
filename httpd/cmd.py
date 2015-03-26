@@ -1,5 +1,5 @@
 import os
-import re
+import sys
 
 PIPENAME = '/tmp/cheese_plate'
 
@@ -18,6 +18,7 @@ def cmd_repl(fifo, data):
     for cmd in cmds:
         fifo.write('%s\n' % (cmd))
         fifo.flush()
+    return cmds
 
 def sanitize_cmd(input_cmd):
     """
@@ -66,4 +67,5 @@ def sanitize_cmd(input_cmd):
             pass
     print("sanitized cmds")
     print(results)
+    sys.stdout.flush()
     return results
