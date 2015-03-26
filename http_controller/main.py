@@ -13,7 +13,7 @@ def hello():
     <li>/status to view cheezoid status</li>
     <li>/cmd to send command</li>
         <ul>
-        <li>mov (relative angle in degree, relative distance in cm)</li>
+        <li>move (relative angle in degree, relative distance in cm)</li>
         <li>pen (up/down) </li>
         <li>reset</li>
         </ul>
