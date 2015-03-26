@@ -21,6 +21,7 @@ unsigned int is_drive_active();
 void right_stop();
 void left_stop();
 void move(int rotate_distance, int drive_distance);
+void calibration();
 
 #endif	/* PWM_DRIVE_H */
 

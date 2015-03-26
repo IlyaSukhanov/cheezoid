@@ -1,15 +1,18 @@
 #include <stdlib.h>
 #include "p24Hxxxx.h"
 #include "outcompare.h"
+#include "sleep_timer.h"
+#include "encoder_feedback.h"
+
 
 //PWM configuration
 #define OC_PWM_CONFIG OC_IDLE_CON & OC_TIMER2_SRC & OC_PWM_FAULT_PIN_DISABLE
 #define MIN_SPEED 50
-#define NOMINAL_SPEED 60
 unsigned int right_distance = 0;
 unsigned int left_distance = 0;
 unsigned int right_drive_active = 0;
 unsigned int left_drive_active = 0;
+unsigned int nominal_speed = 200;
 
 void inline right_direction(unsigned int direction){
     if ( direction > 0 ){
@@ -61,7 +64,6 @@ void configure_drive(){
     T2CONbits.TON = 1;
 }
 
-
 void right_speed(int speed){
     right_direction(speed > 0);
     if(abs(speed) < MIN_SPEED)
@@ -100,9 +102,9 @@ void left_drive(int distance){
     left_distance = abs(distance);
     left_drive_active = left_distance>0;
     if(distance<0){
-        left_speed(-NOMINAL_SPEED);
+        left_speed(-nominal_speed);
     }else{
-        left_speed(NOMINAL_SPEED);
+        left_speed(nominal_speed);
     }
 }
 
@@ -112,9 +114,9 @@ void right_drive(int distance){
     right_distance = abs(distance);
     right_drive_active = right_distance>0;
     if(distance<0){
-        right_speed(-NOMINAL_SPEED);
+        right_speed(-nominal_speed);
     }else{
-        right_speed(NOMINAL_SPEED);
+        right_speed(nominal_speed);
     }
 }
 
@@ -147,4 +149,56 @@ void move(int rotate_distance, int drive_distance){
         right_drive(drive_distance);
         while(is_drive_active());
     }
+}
+
+void calibration(){
+    right_distance = 0xffff;
+    left_distance = 0xffff;
+    int sleep_time = 0x6000;
+    
+    /*
+    right_speed(255);
+    left_speed(255);
+    sleep(sleep_time);
+    int max_up_right_period =  right_front_period();
+    int max_up_left_period = left_front_period();
+    right_speed(10);
+    left_speed(10);
+    
+    sleep(sleep_time);
+
+    right_speed(-255);
+    left_speed(-255);
+    sleep(sleep_time);
+    int max_down_right_period =  right_front_period();
+    int max_down_left_period = left_front_period();
+    right_speed(10);
+    left_speed(10);
+    */
+
+    int max_stop_speed=0;
+    right_speed(max_stop_speed);
+    left_speed(max_stop_speed);
+    sleep(10000);
+    int last_encoder = left_front_encoder_count();
+    sleep(20000);
+    if (last_encoder != left_front_encoder_count()){
+        right_speed(200);
+        left_speed(200);
+    }
+/*
+    while(last_encoder != right_front_encoder_count()){
+        max_stop_speed++;
+        right_speed(max_stop_speed);
+        left_speed(max_stop_speed);
+        last_encoder = right_front_encoder_count();
+        sleep(30000);
+    }
+ */
+    sleep(0xfff);
+
+    right_distance = 0;
+    left_distance = 0;
+
+
 }

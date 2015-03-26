@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
     configure_encoders();
     configure_command_control();
 
+    calibration();
+
     while(1)
     {
         Idle()

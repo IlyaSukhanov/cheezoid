@@ -12,10 +12,14 @@ unsigned int interrupt1_times[ENCODER_BUFFER_LENGTH];
 unsigned int interrupt2_times[ENCODER_BUFFER_LENGTH];
 unsigned int interrupt7_times[ENCODER_BUFFER_LENGTH];
 unsigned int interrupt8_times[ENCODER_BUFFER_LENGTH];
-unsigned int interrupt1_period;
-unsigned int interrupt2_period;
-unsigned int interrupt7_period;
-unsigned int interrupt8_period;
+unsigned int interrupt1_period = 0;
+unsigned int interrupt2_period = 0;
+unsigned int interrupt7_period = 0;
+unsigned int interrupt8_period = 0;
+unsigned int interrupt1_count = 0;
+unsigned int interrupt2_count = 0;
+unsigned int interrupt7_count = 0;
+unsigned int interrupt8_count = 0;
 
 void configure_encoders(){
     //Configure encoder feedback pins for input
@@ -38,9 +42,11 @@ void configure_encoders(){
     ConfigIntCapture8(IC_ENCODER_INTERRUPT);
 }
 
+
 //Right Front interrupt
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
     ReadCapture1(&interrupt1_times[0]);
+    interrupt1_count++;
     interrupt1_period = interrupt1_times[0] - interrupt1_times[1];
     // TODO decrease / increase speed as needed.
     if ( right_distance_remaining(1) <= 0 ){
@@ -52,6 +58,7 @@ void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
 //left Front interrupt
 void __attribute__((__interrupt__, no_auto_psv)) _IC2Interrupt(void){
     ReadCapture2(&interrupt2_times[0]);
+    interrupt2_count++;
     interrupt2_period = interrupt2_times[0] - interrupt2_times[1];
     // TODO decrease / increase speed as needed.
     if ( left_distance_remaining(1) <= 0 ){
@@ -60,13 +67,30 @@ void __attribute__((__interrupt__, no_auto_psv)) _IC2Interrupt(void){
     IFS0bits.IC2IF = 0;
 }
 
-//left read interrupt
+int left_front_period(){
+    return interrupt2_period;
+}
+
+int left_front_encoder_count(){
+    return interrupt2_count;
+}
+
+//right read interrupt
 void __attribute__((__interrupt__, no_auto_psv)) _IC8Interrupt(void){
     ReadCapture8(&interrupt8_times[0]);
+    interrupt8_count++;
     interrupt8_period = interrupt8_times[0] - interrupt8_times[1];
     // TODO decrease / increase speed as needed.
     if ( left_distance_remaining(1) <= 0 ){
         left_stop();
     }
     IFS1bits.IC8IF = 0;
+}
+
+int left_rear_period(){
+    return interrupt8_period;
+}
+
+int left_rear_encoder_count(){
+    return interrupt8_count;
 }
