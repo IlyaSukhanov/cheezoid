@@ -13,7 +13,9 @@ def int_signal_handler(signal, frame):
 
 def create_fifo(pipename):
     if not os.path.exists(pipename):
-        os.mkfifo(pipename)
+        os.mkfifo(pipename, 0666)
+    else:
+        os.chmod(pipename, 0666)
     print "Reading commands from: %s" % pipename
     fifo = open(pipename, 'r')
     return fifo

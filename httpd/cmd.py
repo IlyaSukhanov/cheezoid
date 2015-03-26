@@ -5,7 +5,9 @@ PIPENAME = '/tmp/cheese_plate'
 
 def create_fifo(pipename):
     if not os.path.exists(pipename):
-        os.mkfifo(pipename)
+        os.mkfifo(pipename, 0666)
+    else:
+        os.chmod(pipename, 0666)
     fd = os.open(pipename, os.O_RDWR|os.O_NONBLOCK)
     fifo = os.fdopen(fd, 'w')
     return fifo
