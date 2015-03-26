@@ -29,7 +29,9 @@ def sanitize_cmd(input_cmd):
     reset
     """
     results = []
+    print('raw input')
     print(input_cmd)
+    print('unsanitized cmds')
     cmds = input_cmd.split('\\n')
     print(cmds)
     for cmd in cmds:
@@ -60,4 +62,6 @@ def sanitize_cmd(input_cmd):
                 pass
         else:
             pass
+    print("sanitized cmds")
+    print(results)
     return results
