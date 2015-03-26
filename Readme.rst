@@ -108,6 +108,10 @@ Following packages have been installed:
    + ``pip install svgwrite``
 
  * i2c requirements ``apt-get install python-smbus i2c-tools``
+ 
+ * spi requirements ``pip install spidev``
+
+ * RPIO ``pip install rpio``
 
 Additional OS config has been performed:
 
