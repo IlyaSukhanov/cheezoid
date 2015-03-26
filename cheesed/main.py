@@ -2,6 +2,7 @@ import time
 import sys
 import signal
 import os
+import stat
 
 RUNNING = True
 PIPENAME = "/tmp/cheese_plate"
@@ -11,13 +12,15 @@ def int_signal_handler(signal, frame):
     RUNNING = False
 
 def create_fifo(pipename):
-    if not (os.path.isfile(pipename)):
+    if not (stat.S_ISFIFO(os.stat(pipename).st_mode)):
         os.mkfifo(pipename)
     fifo = open(pipename, 'r')
     return fifo
 
 def repl(fifo):
-    print("cheesed repl loop")
+    line = fifo.read()  # non-blocking
+    sys.stdout.write(line or '.')
+    sys.stdout.flush()
 
 def main():
     fifo = create_fifo(PIPENAME)
@@ -25,6 +28,7 @@ def main():
     while(RUNNING):
         time.sleep(1)
         repl(fifo)
+    fifo.close()
 
 
 if __name__ == '__main__':
