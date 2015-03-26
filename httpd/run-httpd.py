@@ -1,10 +1,12 @@
 from flask import Flask, request
 from cmd import cmd_repl, create_fifo, PIPENAME
+import socket
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
 fifo = create_fifo(PIPENAME)
+hostname = socket.gethostname()
 
 @app.route("/")
 def hello():
@@ -14,11 +16,11 @@ def hello():
     RESTful endpoints, POST to send, GET to receive<br>
     For example:<br>
     <code>
-    curl -X POST --data 'reset' -H 'Content-type: text/plain' localhost:5000/cmd
+    curl -X POST --data 'reset' -H 'Content-type: text/plain' %s:5000/cmd
     </code>
     or <br>
     <code>
-    curl -X POST --data 'reset\n pen down\n move (13, 97)\n pen up' -H 'Content-type: text/plain' localhost:5000/cmd
+    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' -H 'Content-type: text/plain' %s:5000/cmd
     </code>
     <ul>
     <li>/status to view cheezoid status</li>
@@ -34,7 +36,7 @@ def hello():
     </body>
     </html>
 """
-    return msg
+    return msg % (hostname, hostname)
 
 @app.route("/cmd", methods=['POST', 'GET'])
 def cmd_process():
