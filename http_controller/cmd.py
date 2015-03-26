@@ -12,12 +12,12 @@ def create_fifo(pipename):
 
 def cmd_repl(fifo, data):
     fifo = create_fifo(PIPENAME)
-    data = sanitize_cmd(data)
-    if data != "":
-        fifo.write('%s\n' % (data))
+    cmds = sanitize_cmd(data)
+    for cmd in cmds:
+        fifo.write('%s\n' % (cmd))
         fifo.flush()
 
-def sanitize_cmd(cmd):
+def sanitize_cmd(input_cmd):
     """
     command has to be
     move (angle, distance)
@@ -28,32 +28,36 @@ def sanitize_cmd(cmd):
 
     reset
     """
-    cmd = cmd.strip()
-    if cmd[0:5] == 'reset':
-        return cmd[0:5]
-    elif cmd[0:3] == 'pen':
-        if cmd[3:].strip() in ['up', 'down']:
-            return cmd[0:3] + ' ' + cmd[3:].strip()
+    results = []
+    print(input_cmd)
+    cmds = input_cmd.split('\\n')
+    print(cmds)
+    for cmd in cmds:
+        cmd = cmd.strip()
+        if cmd[0:5] == 'reset':
+            results.append(cmd[0:5])
+        elif cmd[0:3] == 'pen':
+            if cmd[3:].strip() in ['up', 'down']:
+                results.append(cmd[0:3] + ' ' + cmd[3:].strip())
+        elif cmd[0:4] == 'move':
+            params = cmd[4:].strip()
+            try:
+                if params[0] == '(' and params[-1] == ')' and params.index(",") >= 0:
+                    (degree_str, distance_str) = params[1:-1].split(",")
+                    distance = float(distance_str)
+                    degree = float(degree_str)
+                    # degree has to be -180.0 to 180
+                    if degree > 180 or degree < -180:
+                        pass
+                    # distance has to  > 0
+                    elif distance <= 0:
+                        pass
+                    else:
+                        results.append("move (%s, %s)" %(str(degree), str(distance)))
+            except ValueError as err:
+                pass
+            else:
+                pass
         else:
-            return ""
-    elif cmd[0:4] == 'move':
-        params = cmd[4:].strip()
-        try:
-            if params[0] == '(' and params[-1] == ')' and params.index(",") >= 0:
-                (degree_str, distance_str) = params[1:-1].split(",")
-                distance = float(distance_str)
-                degree = float(degree_str)
-                # degree has to be -180.0 to 180
-                if degree > 180 or degree < -180:
-                    return ""
-                # distance has to  > 0
-                elif distance <= 0:
-                    return ""
-                else:
-                    return "move (%s, %s)" %(str(degree), str(distance))
-        except ValueError as err:
-            return ""
-        else:
-            return ""
-    else:
-        return ""
+            pass
+    return results
