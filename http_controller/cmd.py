@@ -10,7 +10,9 @@ def create_fifo(pipename):
     fifo = os.fdopen(fd, 'w')
     return fifo
 
-def cmd_repl(fifo):
+def cmd_repl(fifo, data):
     fifo = create_fifo(PIPENAME)
-    fifo.write('reset\n')
+    fifo.write('%s\n' % (data))
+    fifo.flush()
     print('in cmd module')
+    print(data)

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from cmd import cmd_repl, create_fifo, PIPENAME
 
 app = Flask(__name__)
@@ -11,7 +11,11 @@ def hello():
     msg = """
     <html><head><title>Cheezoid</title></head>
     <body><h3>cheezoid httpd controller</h3>
-    RESTful endpoints
+    RESTful endpoints, POST to send, GET to receive<br>
+    For example:<br>
+    <code>
+    curl -X POST --data 'reset' -H 'Content-type: text/plain' localhost:5000/cmd
+    </code>
     <ul>
     <li>/status to view cheezoid status</li>
     <li>/cmd to send command</li>
@@ -28,19 +32,22 @@ def hello():
 """
     return msg
 
-@app.route("/cmd")
+@app.route("/cmd", methods=['POST', 'GET'])
 def cmd_process():
     global fifo
-    cmd_repl(fifo)
-    return "here"
+    if request.method == 'GET':
+        return "cmd\n"
+    elif request.method == 'POST':
+        cmd_repl(fifo, request.data)
+        return "%s\n" % (request.data)
 
 @app.route("/status")
 def status_process():
-    return "status"
+    return "status\n"
 
 @app.route("/svg")
 def svg_process():
-    return "svg"
+    return "svg\n"
 
 @app.route("/canvas")
 def canvas_process():
