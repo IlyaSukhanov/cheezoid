@@ -38,11 +38,16 @@ class Gyro(object):
 		"""
 		self.bus.write_byte_data(GYRO_ADDRESS, PWR_MGMT_1_REG, 0x00)
 
-import time
-gyro = Gyro()
-gyro.wake_up()
-while True:
-	data = gyro.read_data()
-	for value_name in ["accelerator_x", "accelerator_y", "accelerator_z"]:
-		print("{0}:\t{1}".format(value_name, data[value_name]/16384.0))
-	time.sleep(1)
+
+if __name__ == "__main__":
+    """
+    Print accelerator values 'till the "end"
+    """
+    import time
+    gyro = Gyro()
+    gyro.wake_up()
+    while True:
+        data = gyro.read_data()
+        for value_name in ["accelerator_x", "accelerator_y", "accelerator_z"]:
+            print("{0}:\t{1}".format(value_name, data[value_name]/16384.0))
+        time.sleep(1)
