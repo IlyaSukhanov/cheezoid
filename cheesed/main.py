@@ -12,7 +12,7 @@ def int_signal_handler(signal, frame):
     RUNNING = False
 
 def create_fifo(pipename):
-    if not (stat.S_ISFIFO(os.stat(pipename).st_mode)):
+    if not os.path.exists(pipename):
         os.mkfifo(pipename)
     fifo = open(pipename, 'r')
     return fifo
