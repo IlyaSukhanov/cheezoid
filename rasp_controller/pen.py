@@ -5,6 +5,14 @@ PEN_UP_PWM_TIME = 600
 GPIO_PIN = 17
 
 class CheezoidPenUp():
+    """
+    Controls the cheezoid pen. In natural state its always down (drawing).
+    To reposition cheezoid without leaving a trail use this context manager
+    as follows:
+
+    with CheezoidPenUp() as pen:
+        #move here
+    """
     def __enter__(self):
         self.pen_servo = PWM.Servo()
         self.pen_servo.set_servo(GPIO_PIN, PEN_UP_PWM_TIME)
