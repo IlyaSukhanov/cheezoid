@@ -74,12 +74,12 @@ class Cheezoid(object):
         (angle_degrees, distance_cm) = move_cmd.params
         # TODO: check if angle_degrees > max supported
         if angle_degrees > 90:
-            angle_degrees = 180 - angle_degrees
+            angle_degrees = -(180 - angle_degrees)
             distance_cm = -1 * distance_cm
         if angle_degrees < -90:
-            angle_degrees = 180 + angle_degrees
+            angle_degrees = -(180 + angle_degrees)
             distance_cm = -1 * distance_cm
-            
+
         angle_ticks = int(-1.0 * angle_degrees * 96 / 90.0)
         distance_ticks = int(distance_cm * 48 / 1.37)
         with CheezoidPenControl(pen_up=(self._pen_state == FrontCommands.UP)):
