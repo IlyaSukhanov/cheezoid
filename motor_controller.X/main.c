@@ -24,10 +24,10 @@
  * pin9     RF motor direction  (channel 1)
  * pin10    ???? won't flip bit
  * pin11    RR motor direction  (channel 3)
- * pin14    RF encoder 5V   IC1 (channel 1)
- * pin15    LF encoder 5V   IC2 (channel 2)
- * pin16    RR encoder 5V   IC7 (channel 3)
- * pin17    LR encoder 5V   IC8 (channel 4)
+ * pin14    RP5 FR encoder 5V   IC1 (channel 1)
+ * pin15    RP6 FL encoder 5V   IC2 (channel 2)
+ * pin16    RP7 RR encoder 5V   IC7 (channel 3)
+ * pin17    RP8 RL encoder 5V   IC8 (channel 4)
  * pin18    SPI SCLK yellow     RP9
  * pin21    SPI MOSI red        RP10
  * pin22    SPI MISO orange     RP11
@@ -65,13 +65,13 @@ int main(int argc, char** argv) {
     configure_encoders();
     configure_command_control();
 
-    calibration();
+    drive_calibration();
+    move(96,0);
 
     while(1)
     {
         Idle()
     }
     return 0;
-
 }
 
