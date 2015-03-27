@@ -38,8 +38,8 @@ def hello():
     <br>
     Below are RESTful endpoints, POST to send, GET to receive<br>
     <ul>
-    <li>/status to view cheezoid status</li>
-    <li>/cmd to send command</li>
+    <li><a href="/status">/status<a> to view cheezoid status</li>
+    <li><a href="/cmd">/cmd</a> to send command</li>
         <ul>
         <li>set: make current position origin. and orient cheezoid correctly</li>
         <li>move (relative angle in degree, relative distance in cm): orient cheezoid at angel of param 1 degrees to vertical Y
@@ -47,8 +47,8 @@ def hello():
         <li>pen [up/down]: put pen down or pen up </li>
         <li>reset: move cheezoid back to origin and oriented </li>
         </ul>
-    <li>/svg to send svg</li>
-    <li>/canvas to GUI</li>
+    <li><a href="/svg">/svg</a> to send svg</li>
+    <li><a href="/canvas">/canvas</a> to GUI</li>
     </ul>
     </body>
     </html>
@@ -68,15 +68,16 @@ def cmd_process():
 
 @app.route("/status")
 def status_process():
-    return "status\n"
+    return "I'm alive!"
 
 @app.route("/svg")
 def svg_process():
-    return "svg\n"
+    return "Coming soon! ;)"
 
 @app.route("/canvas")
 def canvas_process():
-    return "canvas"
+    with open("static/cheezoid_canvas.html") as f:
+        return f.read()
 
 if __name__ == "__main__":
     global fifo
