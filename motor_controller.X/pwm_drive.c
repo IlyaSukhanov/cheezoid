@@ -18,9 +18,9 @@ int left_desired_direction = 0;
 int max_stop_speed = 0;
 
 //in flat land mode these should be set to the same value
-#define ADVANTAGED_SPEED 50 
+#define ADVANTAGED_SPEED 255
 #define DISADVANTAGED_SPEED 255 
-#define ADVANTAGED_SPEED_ADJUST 10 
+#define ADVANTAGED_SPEED_ADJUST 10
 #define DISADVANTAGED_SPEED_ADJUST 20
 
 void inline right_direction(unsigned int direction){
@@ -204,7 +204,7 @@ void right_drive(const int distance, const int speed){
 void right_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
     if (ticks < right_distance){
         right_distance -= ticks;
-        right_speed_adjust(our_period, their_period);
+        //right_speed_adjust(our_period, their_period);
     } else {
         right_stop();
     }
@@ -213,7 +213,7 @@ void right_drive_tick(const unsigned int ticks, const int our_period, const int 
 void left_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
     if (ticks < left_distance){
         left_distance -= ticks;
-        left_speed_adjust(our_period, their_period);
+        //left_speed_adjust(our_period, their_period);
     } else {
         left_stop();
     }
