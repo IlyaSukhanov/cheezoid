@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-PI_HOSTNAME="${1:-cheezoid-jr}"
+PI_HOSTNAME="${1:-cheezoid}"
 SSH_DEST="pi@${PI_HOSTNAME}"
 PYTHONPATH="/home/pi/cheezoid"
 
