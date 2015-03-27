@@ -97,7 +97,7 @@ The following additional configuration has been performed through raspi-config:
 
 Following packages have been installed:
 
- * Creature comforts ``apt-get install vim git fish ipython python-setuptools``
+ * Creature comforts ``apt-get install vim git fish ipython python-setuptools python-dev``
 
  * SimpleCV & dependencies:
 
