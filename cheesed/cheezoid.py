@@ -81,20 +81,21 @@ class Cheezoid(object):
     def move(self, move_cmd):
         print('sending move command(s): %s with pen %s' % (move_cmd, self._pen_state))
         (angle_degrees, distance_cm) = move_cmd.params
-        # TODO: check if angle_degrees > max supported
         if angle_degrees < MAX_SUPPORTED_DEGREE and angle_degrees > MIN_SUPPORTED_DEGREE:
             if not self._alignment:
                 distance_cm = -1 * distance_cm
 
         if angle_degrees > MAX_SUPPORTED_DEGREE:
             angle_degrees = angle_degrees - 180
-            distance_cm = -1 * distance_cm
             self._alignment = not self._alignment
+            if not self._alignment:
+                distance_cm = -1 * distance_cm
 
         if angle_degrees < MIN_SUPPORTED_DEGREE:
             angle_degrees = angle_degrees + 180
-            distance_cm = -1 * distance_cm
             self._alignment = not self._alignment
+            if not self._alignment
+                distance_cm = -1 * distance_cm
 
         angle_ticks = int(-1.0 * angle_degrees * 96 / 90.0)
         distance_ticks = int(distance_cm * 48 / 1.37)
