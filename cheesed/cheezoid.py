@@ -120,6 +120,8 @@ class Cheezoid(object):
         self._total_moves = []
         self._total_cmds = []
         self._alignment = True
+        self._pen_state = FrontCommands.DOWN
+        self._current_coords = (0,0)
         pass
 
     def get_origin_move(self):
