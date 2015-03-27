@@ -1,7 +1,7 @@
 var canvas, context;
 var prevX = 0,
 	prevY = 0,
-	prevRot = 0,
+	prevRot = 90,
 	currentX = 0,
 	currentY = 0,
 	currentRot = 0; //relative to y-axis
