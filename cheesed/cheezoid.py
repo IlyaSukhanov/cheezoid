@@ -1,11 +1,13 @@
 import math
 from rasp_controller.drive import CheezoidDrive
 from rasp_controller.pen import CheezoidPenControl
+import time
 
 
 DEGREE_IN_RADIAN = 0.0174532925
 MAX_SUPPORTED_DEGREE = 90
 MIN_SUPPORTED_DEGREE = -90
+TOTAL_DEGREES = 360
 
 class Cheezoid(object):
 
@@ -16,6 +18,18 @@ class Cheezoid(object):
         self._pen_state = FrontCommands.DOWN
         self._cheezoid_drive = CheezoidDrive()
         self._alignment = True
+
+    def current_turtle_angle(self):
+        all_angles = [m._param_1 for m in self._total_moves]
+        accumulated_angle = []
+        sum_angle = 0
+        for angle in all_angles:
+            sum_angle = sum_angle + angle
+            if sum_angle > 0:
+                sum_angle = sum_angle % TOTAL_DEGREES
+            elif sum_angle < 0:
+                sum_angle = -1.0 * (math.fabs(sum_angle) % TOTAL_DEGREES)
+        return sum_angle
 
     def where_am_i(self):
         # compute current coord,
@@ -105,12 +119,44 @@ class Cheezoid(object):
     def set_current_position_as_origin(self):
         self._total_moves = []
         self._total_cmds = []
+        self._alignment = True
         pass
 
     def get_origin_move(self):
         return
 
     def get_reset_move(self):
+        current_total_angle = self.current_turtle_angle()
+        current_location = self.where_am_i()
+        distance = math.sqrt(current_location[0] * current_location[0] +
+                             current_location[1] * current_location[1])
+        vec = (current_location[0]/distance, current_location[1]/distance)
+        position_angle = math.acos(vec[0]) / DEGREE_IN_RADIAN
+        if vec[1] > 0:
+            position_angle = -1.0 * position_angle
+
+        if self._alignment:
+            distance = -1 * distance
+
+        angle_diff = position_angle - current_total_angle
+        if angle_diff > 180:
+            angle_diff = angle_diff - 360
+        elif angle_diff < -180:
+            angle_diff = angle_diff + 360
+        self.move(FrontCommands(cmd=FrontCommands.MOVE, param_1=angle_diff, param_2=distance))
+        # need to block for next command in this case
+        time.sleep(20)
+        if position_angle >= 0:
+            if self._alignment:
+                self.move(FrontCommands(cmd=FrontCommands.MOVE, param_1=180 - position_angle, param_2=0))
+            else:
+                self.move(FrontCommands(cmd=FrontCommands.MOVE, param_1=-1.0 * position_angle, param_2=0))
+        else:
+            if self._alignment:
+                self.move(FrontCommands(cmd=FrontCommands.MOVE, param_1=-1.0*(180 + position_angle), param_2=0))
+            else:
+                self.move(FrontCommands(cmd=FrontCommands.MOVE, param_1=-1.0 * position_angle, param_2=0))
+        self.set_current_position_as_origin()
         return
 
 class FrontCommands(object):
