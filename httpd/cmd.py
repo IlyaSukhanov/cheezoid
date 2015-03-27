@@ -54,7 +54,7 @@ def sanitize_cmd(input_cmd):
                 degree = float(match.groups()[0])
                 distance = float(match.groups()[1])
                 if (degree < 180 and degree > -180 and distance > 0):
-                    results.append('move (%s, %s)' % (str(degree), str(distance)))
+                    results.append('move %s %s' % (str(degree), str(distance)))
             except ValueError as err:
                 pass
     print("sanitized cmds")

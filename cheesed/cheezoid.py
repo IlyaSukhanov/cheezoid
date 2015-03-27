@@ -103,10 +103,25 @@ class FrontCommands(object):
     UP = 0
     DOWN = 1
 
+    COMMAD_STR = {
+        SET : 'set',
+        RESET: 'reset',
+        MOVE: 'move',
+        PEN: 'pen'
+    }
+
     def __init__(self, cmd, param_1=None, param_2=None):
         self._cmd = cmd
         self._param_1 = param_1
         self._param_2 = param_2
+
+    def __repr__(self):
+        if self._param_2:
+            return "%s %s %s" % (self.COMMAD_STR[self._cmd], self._param_1, self._param_2)
+        elif self._param_1:
+            return "%s %s" % (self.COMMAD_STR[self._cmd], self._param_1)
+        elif self._cmd:
+            return "%s" % (self.COMMAD_STR[self._cmd])
 
     @classmethod
     def cmd_factory(cls, cmd):
