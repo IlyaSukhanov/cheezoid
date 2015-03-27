@@ -1,5 +1,5 @@
 from flask import Flask, request
-from cmd import cmd_repl, create_fifo, PIPENAME
+from command import cmd_repl, create_fifo, PIPENAME
 import socket
 import sys
 
@@ -19,27 +19,27 @@ def hello():
     <li>
     Make current location the origin<br>
     <code>
-    curl -X POST --data 'set' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'set' %s/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin<br>
     <code>
-    curl -X POST --data 'reset' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'reset' %s/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin then draw a line<br>
     <code>
-    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' %s/cmd
     </code>
     </li>
     </ul>
     <br>
     Below are RESTful endpoints, POST to send, GET to receive<br>
     <ul>
-    <li>/status to view cheezoid status</li>
-    <li>/cmd to send command</li>
+    <li><a href="/status">/status<a> to view cheezoid status</li>
+    <li><a href="/cmd">/cmd</a> to send command</li>
         <ul>
         <li>set: make current position origin. and orient cheezoid correctly</li>
         <li>move (relative angle in degree, relative distance in cm): orient cheezoid at angel of param 1 degrees to vertical Y
@@ -47,8 +47,8 @@ def hello():
         <li>pen [up/down]: put pen down or pen up </li>
         <li>reset: move cheezoid back to origin and oriented </li>
         </ul>
-    <li>/svg to send svg</li>
-    <li>/canvas to GUI</li>
+    <li><a href="/svg">/svg</a> to send svg</li>
+    <li><a href="/canvas">/canvas</a> to GUI</li>
     </ul>
     </body>
     </html>
@@ -59,25 +59,28 @@ def hello():
 def cmd_process():
     global fifo
     if request.method == 'GET':
-        return "Please use POST\n"
+        with open("static/cmd.html") as f:
+            return f.read()
     elif request.method == 'POST':
-        cmds = cmd_repl(fifo, request.data)
+        body = request.data or request.form.get("commands", request.form.keys()[0])
+        cmds = cmd_repl(fifo, body)
         return "%s\n" % ("\n".join(cmds))
 
 @app.route("/status")
 def status_process():
-    return "status\n"
+    return "I'm alive!"
 
 @app.route("/svg")
 def svg_process():
-    return "svg\n"
+    return "Coming soon! ;)"
 
 @app.route("/canvas")
 def canvas_process():
-    return "canvas"
+    with open("static/cheezoid_canvas.html") as f:
+        return f.read()
 
 if __name__ == "__main__":
     global fifo
     fifo = create_fifo(PIPENAME)
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=80)
     fifo.close()
