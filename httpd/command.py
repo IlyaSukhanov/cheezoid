@@ -35,7 +35,7 @@ def sanitize_cmd(input_cmd):
     results = []
     #print('raw input')
     #print(input_cmd)
-    cmds = input_cmd.split('\\n')
+    cmds = input_cmd.replace('\r','').replace('\\n', '\n').split('\n')
     print('unsanitized cmds: %s' % ",".join(cmds))
     for cmd in cmds:
         cmd = cmd.strip()

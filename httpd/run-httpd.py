@@ -19,19 +19,19 @@ def hello():
     <li>
     Make current location the origin<br>
     <code>
-    curl -X POST --data 'set' %s:5000/cmd
+    curl -X POST --data 'set' %s/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin<br>
     <code>
-    curl -X POST --data 'reset' %s:5000/cmd
+    curl -X POST --data 'reset' %s/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin then draw a line<br>
     <code>
-    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' %s:5000/cmd
+    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' %s/cmd
     </code>
     </li>
     </ul>
@@ -59,9 +59,10 @@ def hello():
 def cmd_process():
     global fifo
     if request.method == 'GET':
-        return "Please use POST\n"
+        with open("static/cmd.html") as f:
+            return f.read()
     elif request.method == 'POST':
-        body = request.data or request.form.keys()[0]
+        body = request.data or request.form.get("commands", request.form.keys()[0])
         cmds = cmd_repl(fifo, body)
         return "%s\n" % ("\n".join(cmds))
 
@@ -80,5 +81,5 @@ def canvas_process():
 if __name__ == "__main__":
     global fifo
     fifo = create_fifo(PIPENAME)
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=80)
     fifo.close()
