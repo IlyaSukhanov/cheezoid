@@ -94,6 +94,9 @@
                 if($('#drawbutton').is(":checked")){
                     cmdString = "pen down\n " + cmdString + " pen up\n";
                 }
+                else{
+                    cmdString = "pen up\n " + cmdString + " pen down\n";
+                }
                 return cmdString;
             }
 
