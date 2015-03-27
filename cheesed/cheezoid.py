@@ -72,16 +72,9 @@ class Cheezoid(object):
         elif front_cmd._cmd == FrontCommands.PEN:
             self.move_pen(front_cmd._param_1)
         elif front_cmd._cmd == FrontCommands.SET:
-            cmds = self.get_origin_move()
-            for cmd in cmds:
-                # to be added, execute reoriented movement
-                pass
             self.set_current_position_as_origin()
         elif front_cmd._cmd == FrontCommands.RESET:
             cmds = self.get_reset_moves()
-            for cmd in cmds:
-                # to be added execute moves to move back origin
-                pass
         #print(self._total_moves)
         #print(self._total_cmds)
 
@@ -121,11 +114,11 @@ class Cheezoid(object):
         self._total_cmds = []
         self._alignment = True
         self._pen_state = FrontCommands.DOWN
-        self._current_coords = (0,0)
+        self._current_coords = (0.0,0.0)
         pass
 
     def get_origin_move(self):
-        return
+        return []
 
     def get_reset_moves(self):
         current_total_angle = self.current_turtle_angle()
