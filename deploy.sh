@@ -22,10 +22,10 @@ function copy_files() {
 function restart_services() {
   log "Restarting services..."
   echo "killall..."
-  ssh -n ${SSH_DEST} "killall python || true"
+  ssh -n ${SSH_DEST} "sudo killall python || true"
   for service in cheesed httpd; do
     echo "start ${service}..."
-    ssh -n ${SSH_DEST} "sh -c 'cd ${PYTHONPATH}/${service} && export PYTHONPATH=${PYTHONPATH} && nohup python run-${service}.py > /tmp/${service}.log 2>&1 < /dev/null &'"
+    ssh -n ${SSH_DEST} "sh -c 'cd ${PYTHONPATH}/${service} && nohup sudo PYTHONPATH=${PYTHONPATH} python run-${service}.py > /tmp/${service}.log 2>&1 < /dev/null &'"
   done
 }
 
