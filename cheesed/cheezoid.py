@@ -94,7 +94,7 @@ class Cheezoid(object):
         if angle_degrees < MIN_SUPPORTED_DEGREE:
             angle_degrees = angle_degrees + 180
             self._alignment = not self._alignment
-            if not self._alignment
+            if not self._alignment:
                 distance_cm = -1 * distance_cm
 
         angle_ticks = int(-1.0 * angle_degrees * 96 / 90.0)
