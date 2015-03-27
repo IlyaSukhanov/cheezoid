@@ -1,5 +1,6 @@
 import math
 from rasp_controller.drive import CheezoidDrive
+from rasp_controller.pen import CheezoidPenControl
 
 
 DEGREE_IN_RADIAN = 0.0174532925
@@ -51,15 +52,15 @@ class Cheezoid(object):
         if front_cmd._cmd == FrontCommands.MOVE:
             self._total_moves.append(front_cmd)
             self.move(front_cmd)
-        elif front_cmd == FrontCommands.PEN:
+        elif front_cmd._cmd == FrontCommands.PEN:
             self.move_pen(front_cmd._param_1)
-        elif front_cmd == FrontCommands.SET:
+        elif front_cmd._cmd == FrontCommands.SET:
             cmds = self.get_origin_move()
             for cmd in cmds:
                 # to be added, execute reoriented movement
                 pass
             self.set_current_position_as_origin()
-        elif front_cmd == FrontCommands.RESET:
+        elif front_cmd._cmd == FrontCommands.RESET:
             cmds = self.get_reset_moves()
             for cmd in cmds:
                 # to be added execute moves to move back origin
@@ -68,17 +69,18 @@ class Cheezoid(object):
         #print(self._total_cmds)
 
     def move(self, move_cmd):
-        print('sending move command(s): %s' % move_cmd)
+        print('sending move command(s): %s with pen %s' % (move_cmd, self._pen_state))
         (angle_degrees, distance_cm) = move_cmd.params
         # TODO: check if angle_degrees > max supported
         angle_ticks = int(angle_degrees * 96 / 90.0)
         distance_ticks = int(distance_cm * 48 / 1.37)
-        self._cheezoid_drive.move(angle_ticks, distance_ticks)
+        with CheezoidPenControl(pen_up=(self._pen_state == FrontCommands.UP)):
+            self._cheezoid_drive.move(angle_ticks, distance_ticks)
         print('cheezoid is now at coord: %s' % ",".join(map(str, self.where_am_i())))
 
     def move_pen(self, direction):
         print("pen state: %s" % ("down" if direction == FrontCommands.DOWN else "up"))
-        self._pen_down = direction
+        self._pen_state = direction
 
     def move_motor(self, gyro, angle, distance):
         pass
