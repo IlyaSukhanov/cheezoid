@@ -24,11 +24,13 @@ class CheezoidPenControl():
         self.pen_up = pen_up
 
     def __enter__(self):
-        self.servo_control(self.pen_up)
+        if self.pen_up:
+            self.servo_control(pen_up=True)
         return self
 
     def __exit__(self, type, value, traceback):
-        self.servo_control(not self.pen_up)
+        if self.pen_up:
+            self.servo_control(pen_up=False)
 
     def servo_control(self, pen_up):
         if pen_up:
