@@ -1,5 +1,5 @@
 from flask import Flask, request
-from cmd import cmd_repl, create_fifo, PIPENAME
+from command import cmd_repl, create_fifo, PIPENAME
 import socket
 import sys
 
@@ -19,19 +19,19 @@ def hello():
     <li>
     Make current location the origin<br>
     <code>
-    curl -X POST --data 'set' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'set' %s:5000/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin<br>
     <code>
-    curl -X POST --data 'reset' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'reset' %s:5000/cmd
     </code>
     </li>
     <li>
     Move cheezoid back to origin then draw a line<br>
     <code>
-    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' -H 'Content-type: text/plain' %s:5000/cmd
+    curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' %s:5000/cmd
     </code>
     </li>
     </ul>
@@ -61,7 +61,8 @@ def cmd_process():
     if request.method == 'GET':
         return "Please use POST\n"
     elif request.method == 'POST':
-        cmds = cmd_repl(fifo, request.data)
+        body = request.data or request.form.keys()[0]
+        cmds = cmd_repl(fifo, body)
         return "%s\n" % ("\n".join(cmds))
 
 @app.route("/status")
