@@ -125,7 +125,7 @@ class Cheezoid(object):
     def get_origin_move(self):
         return
 
-    def get_reset_move(self):
+    def get_reset_moves(self):
         current_total_angle = self.current_turtle_angle()
         current_location = self.where_am_i()
         distance = math.sqrt(current_location[0] * current_location[0] +
