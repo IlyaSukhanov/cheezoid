@@ -4,6 +4,7 @@ from rasp_controller.pen import CheezoidPenControl
 
 
 DEGREE_IN_RADIAN = 0.0174532925
+MAX_SUPPORTED_DEGREE = 90
 
 class Cheezoid(object):
 
@@ -72,6 +73,13 @@ class Cheezoid(object):
         print('sending move command(s): %s with pen %s' % (move_cmd, self._pen_state))
         (angle_degrees, distance_cm) = move_cmd.params
         # TODO: check if angle_degrees > max supported
+        if angle_degrees > 90:
+            angle_degrees = 180 - angle_degrees
+            distance_cm = -1 * distance_cm
+        if angle_degrees < -90:
+            angle_degrees = 180 + angle_degrees
+            distance_cm = -1 * distance_cm
+            
         angle_ticks = int(-1.0 * angle_degrees * 96 / 90.0)
         distance_ticks = int(distance_cm * 48 / 1.37)
         with CheezoidPenControl(pen_up=(self._pen_state == FrontCommands.UP)):
