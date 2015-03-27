@@ -33,11 +33,10 @@ def sanitize_cmd(input_cmd):
     reset
     """
     results = []
-    print('raw input')
-    print(input_cmd)
-    print('unsanitized cmds')
+    #print('raw input')
+    #print(input_cmd)
     cmds = input_cmd.split('\\n')
-    print(cmds)
+    print('unsanitized cmds: %s' % ",".join(cmds))
     for cmd in cmds:
         cmd = cmd.strip()
         if re.match('^set\s*$', cmd):
@@ -57,7 +56,6 @@ def sanitize_cmd(input_cmd):
                     results.append('move %s %s' % (str(degree), str(distance)))
             except ValueError as err:
                 pass
-    print("sanitized cmds")
-    print(results)
+    print("sanitized cmds: %s" % ",".join(results))
     sys.stdout.flush()
     return results
