@@ -1,6 +1,13 @@
-import spidev
 import time
 import struct
+
+try:
+    # likely to fail on non-raspberries
+    import spidev
+except:
+    print "WARNING: could not import spidev"
+    SpiDev = type("mock_SpiDev", (object,), {"open": lambda self, bus, dev: object(), "xfer": lambda self, bits: None})()
+    spidev = type("mock_spidev", (object,), {"SpiDev": lambda self: SpiDev})()
 
 class OutOfBoundsError(RuntimeError):
     pass
@@ -21,7 +28,7 @@ class CheezoidDrive():
         self.spi_bus.xfer([rotation_distance>>8 & 0xff, rotation_distance & 0xff])
         time.sleep(.1)
         self.spi_bus.xfer([drive_distance>>8 & 0xff, drive_distance & 0xff])
-        
+
 
 if __name__ == "__main__":
     drive = CheezoidDrive()

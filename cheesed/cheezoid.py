@@ -1,4 +1,5 @@
 import math
+from rasp_controller.drive import CheezoidDrive
 
 
 DEGREE_IN_RADIAN = 0.0174532925
@@ -9,6 +10,8 @@ class Cheezoid(object):
         self._total_cmds = []
         self._total_moves = []
         self._current_coords = (0, 0)
+        self._pen_state = FrontCommands.DOWN
+        self._cheezoid_drive = CheezoidDrive()
 
     def where_am_i(self):
         # compute current coord,
@@ -47,9 +50,7 @@ class Cheezoid(object):
         self._total_cmds.append(front_cmd)
         if front_cmd._cmd == FrontCommands.MOVE:
             self._total_moves.append(front_cmd)
-            # to be added move
-            print('cheezoid is now at coord: ')
-            print(self.where_am_i())
+            self.move(front_cmd)
         elif front_cmd == FrontCommands.PEN:
             self.move_pen(front_cmd._param_1)
         elif front_cmd == FrontCommands.SET:
@@ -66,11 +67,18 @@ class Cheezoid(object):
         print(self._total_moves)
         print(self._total_cmds)
 
-    def convert_cmd(self):
-        pass
+    def move(self, move_cmd):
+        print('sending move command(s): %s' % move_cmd)
+        (angle_degrees, distance_cm) = move_cmd.params
+        # TODO: check if angle_degrees > max supported
+        angle_ticks = int(angle_degrees * 96 / 90.0)
+        distance_ticks = int(distance_cm * 48 / 1.37)
+        self._cheezoid_drive.move(angle_ticks, distance_ticks)
+        print('cheezoid is now at coord: %s' % ",".join(map(str, self.where_am_i())))
 
     def move_pen(self, direction):
-        pass
+        print("pen state: %s" % ("down" if direction == FrontCommands.DOWN else "up"))
+        self._pen_down = direction
 
     def move_motor(self, gyro, angle, distance):
         pass
@@ -100,7 +108,6 @@ class FrontCommands(object):
         self._param_1 = param_1
         self._param_2 = param_2
 
-
     @classmethod
     def cmd_factory(cls, cmd):
         if cmd == 'set':
@@ -115,3 +122,6 @@ class FrontCommands(object):
             a = cmd.split(' ')
             return FrontCommands(FrontCommands.MOVE, float(a[1]), float(a[2]))
 
+    @property
+    def params(self):
+        return (self._param_1, self._param_2)
