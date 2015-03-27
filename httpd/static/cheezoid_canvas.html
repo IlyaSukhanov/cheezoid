@@ -13,9 +13,10 @@
             var canvas, context;
             var prevX = 0,
                 prevY = 0,
-                prevRot = 90,
+                prevRot = -90,
                 currentX = 0,
                 currentY = 0,
+                initial = 1,
                 currentRot = 0; //relative to y-axis
 
             function init() {
@@ -55,14 +56,16 @@
                     //Set current rotational angle the bot is facing
                     var theta = Math.atan2(currentY - prevY, currentX - prevX);
                     theta *= 180/Math.PI;
-                    prevRot = currentRot;
+                    if (initial != 1){
+                        prevRot = currentRot;
+                    }
                     currentRot = theta;
                     var angleDiff = currentRot - prevRot;
                     //Contraint the rotation in between -180 to 180
-                    if(-180 > angleDiff){
+                    if(-180 >= angleDiff){
                         angleDiff = 360 + angleDiff;
                     }
-                    else if (angleDiff > 180) {
+                    else if (angleDiff >= 180) {
                         angleDiff = angleDiff - 360;
                     }
                     angleDiff = Math.round(angleDiff);
@@ -72,7 +75,8 @@
                     var cmDist = getLineLen(prevX,prevY,currentX,currentY) / scale;
                     cmDist = Math.round(cmDist*100)/100;
                     updateStatusBar(createCmdString(angleDiff,cmDist));
-                    postCmd(createCmdString(angleDiff,cmDist))
+                    postCmd(createCmdString(angleDiff,cmDist));
+                    initial = 0;
 
                 }
             }
