@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-
   <style type="text/css">
     form {
       padding: 3em 3em 3em 3em;
-      width: 40em;
+      width: 25em;
       border: 10px dotted orange;
     }
   </style>
 </head>
 <body>
-  <div align="center">
+  <img style="position:absolute; z-index:-1;" width="100%" src="static/cheezoid_on_whiteboard.jpg"/>
+
+  <center><p style="font-size: 30px">Cheezoid control room</p></center>
+
   <form method="post" action="/cmd">
     <div class="form-group">
       <label for="commands">Enter commands here:</label>
-      <textarea class="form-control" name="commands" rows="5"></textarea>
+      <textarea class="form-control" name="commands" rows="20"></textarea>
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
-  </form></div>
+  </form>
 </body>
 </html>
