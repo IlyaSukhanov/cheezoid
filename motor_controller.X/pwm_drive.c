@@ -12,13 +12,16 @@ unsigned int right_distance = 0;
 unsigned int left_distance = 0;
 unsigned int left_speed = 0;
 unsigned int right_speed = 0;
-unsigned int nominal_speed = 255;
 unsigned int desired_period = 0;
 int right_desired_direction = 0;
 int left_desired_direction = 0;
 int max_stop_speed = 0;
-#define ADVANTAGED_SPEED_INCREMENT 2
-#define DISADVANTAGED_SPEED_ADJUST 4
+
+//in flat land mode these should be set to the same value
+#define ADVANTAGED_SPEED 50 
+#define DISADVANTAGED_SPEED 255 
+#define ADVANTAGED_SPEED_ADJUST 10 
+#define DISADVANTAGED_SPEED_ADJUST 20
 
 void inline right_direction(unsigned int direction){
     if ( direction > 0 ){
@@ -72,74 +75,92 @@ void configure_drive(){
 
 void set_right_speed(int speed){
     right_direction(speed > 0);
-    if(abs(speed) < MIN_SPEED)
-        speed = 0;
     right_speed = speed;
+    speed=abs(speed);
+    if(speed < MIN_SPEED){
+        speed = 0;
+    }
     OpenOC1(OC_PWM_CONFIG, speed, speed);
     OpenOC3(OC_PWM_CONFIG, speed, speed);
 }
 
 void set_left_speed(int speed){
     left_direction(speed > 0);
-    if(abs(speed) < MIN_SPEED)
-        speed = 0;
     left_speed = speed;
+    speed=abs(speed);
+    if(speed < MIN_SPEED){
+        speed = 0;
+    }
     OpenOC2(OC_PWM_CONFIG, speed, speed);
     OpenOC4(OC_PWM_CONFIG, speed, speed);
 }
 
-void right_speed_adjust(const int period){
-    if (period < desired_period){
-        //speed up
-        if (right_desired_direction < 0 ){
-            //going down
-            right_speed -= ADVANTAGED_SPEED_INCREMENT;
-        }else if(right_desired_direction > 0){
-            //going up
-            right_speed += DISADVANTAGED_SPEED_ADJUST;
-        }
-    } else if(period > desired_period){
+void right_speed_adjust(const int our_period, const int their_period){
+    int target_period;
+    int new_speed = right_speed;
+    if (right_desired_direction == -1 && left_desired_direction == 1){
+        target_period = their_period;
+    }else{
+        target_period = desired_period; 
+    }
+    if (our_period < target_period){
         //speed down
         if (right_desired_direction < 0 ){
             //going down
-            right_speed -= DISADVANTAGED_SPEED_ADJUST;
+            new_speed += ADVANTAGED_SPEED_ADJUST;
         }else if(right_desired_direction > 0){
             //going up
-            right_speed += ADVANTAGED_SPEED_INCREMENT;
+            new_speed -= DISADVANTAGED_SPEED_ADJUST;
+        }
+    } else if(our_period > target_period){
+        //speed up
+        if (right_desired_direction < 0 ){
+            //going down
+            new_speed -= DISADVANTAGED_SPEED_ADJUST;
+        }else if(right_desired_direction > 0){
+            //going up
+            new_speed += ADVANTAGED_SPEED_ADJUST;
         }
     }else{
         return;
     }
-    set_right_speed(right_speed);
+    set_right_speed(new_speed);
 }
 
-void left_speed_adjust(const int period){
-    if (period < desired_period){
-        //speed up
-        if (left_desired_direction < 0 ){
-            //going down
-            left_speed -= ADVANTAGED_SPEED_INCREMENT;
-        }else if(left_desired_direction > 0){
-            //going up
-            left_speed += DISADVANTAGED_SPEED_ADJUST;
-        }
-    } else if(period > desired_period){
+void left_speed_adjust(const int our_period, const int their_period){
+    int target_period;
+    int new_speed = left_speed;
+    if (left_desired_direction == -1 && right_desired_direction == 1){
+        target_period = their_period;
+    }else{
+        target_period = desired_period; 
+    }
+    if (our_period < target_period){
         //speed down
         if (left_desired_direction < 0 ){
             //going down
-            left_speed -= DISADVANTAGED_SPEED_ADJUST;
+            new_speed += DISADVANTAGED_SPEED_ADJUST;
         }else if(left_desired_direction > 0){
             //going up
-            left_speed += ADVANTAGED_SPEED_INCREMENT;
+            new_speed -= ADVANTAGED_SPEED_ADJUST;
+        }
+    } else if(our_period > target_period){
+        //speed up
+        if (left_desired_direction < 0 ){
+            //going down
+            new_speed -= ADVANTAGED_SPEED_ADJUST;
+        }else if(left_desired_direction > 0){
+            //going up
+            new_speed += DISADVANTAGED_SPEED_ADJUST;
         }
     }else{
         return;
     }
-    set_left_speed(left_speed);
+    set_left_speed(new_speed);
 }
 
 unsigned int is_drive_active(){
-    return right_desired_direction == 0 && left_desired_direction == 0;
+    return right_desired_direction != 0 && left_desired_direction != 0;
 }
 
 void right_stop(){
@@ -154,45 +175,45 @@ void left_stop(){
     set_left_speed(max_stop_speed);
 }
 
-void left_drive(const int distance){
+void left_drive(const int distance, const int speed){
     left_distance = abs(distance);
     if (distance == 0) {
         left_stop();
     } if (distance < 0){
         left_desired_direction = -1;
-        set_left_speed(-nominal_speed);
+        set_left_speed(-speed);
     }else if(distance > 0 ){
         left_desired_direction = 1;
-        set_left_speed(nominal_speed);
+        set_left_speed(speed);
     }
 }
 
-void right_drive(const int distance){
+void right_drive(const int distance, const int speed){
     right_distance = abs(distance);
     if (distance == 0) {
         right_stop();
     } if (distance < 0){
         right_desired_direction = -1;
-        set_right_speed(-nominal_speed);
+        set_right_speed(-speed);
     }else if(distance > 0 ){
         right_desired_direction = 1;
-        set_right_speed(nominal_speed);
+        set_right_speed(speed);
     }
 }
 
-void right_drive_tick(const unsigned int ticks, const int period){
+void right_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
     if (ticks < right_distance){
         right_distance -= ticks;
-        right_speed_adjust(period);
+        right_speed_adjust(our_period, their_period);
     } else {
         right_stop();
     }
 }
 
-void left_drive_tick(const unsigned int ticks, const int period){
+void left_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
     if (ticks < left_distance){
         left_distance -= ticks;
-        left_speed_adjust(period);
+        left_speed_adjust(our_period, their_period);
     } else {
         left_stop();
     }
@@ -200,13 +221,18 @@ void left_drive_tick(const unsigned int ticks, const int period){
 
 void move(const int rotate_distance,const int drive_distance){
     if(rotate_distance != 0){
-        left_drive(-rotate_distance);
-        right_drive(rotate_distance);
+        if(rotate_distance < 0){
+            left_drive(-rotate_distance, DISADVANTAGED_SPEED);
+            right_drive(rotate_distance, ADVANTAGED_SPEED);
+        }else{
+            left_drive(-rotate_distance, ADVANTAGED_SPEED);
+            right_drive(rotate_distance, DISADVANTAGED_SPEED);
+        }
         while(is_drive_active());
     }
     if (drive_distance != 0){
-        left_drive(drive_distance);
-        right_drive(drive_distance);
+        left_drive(drive_distance, ADVANTAGED_SPEED);
+        right_drive(drive_distance, ADVANTAGED_SPEED);
         while(is_drive_active());
     }
 }
@@ -214,15 +240,14 @@ void move(const int rotate_distance,const int drive_distance){
 void wheel_period_calibration(){
     right_distance = 0xffff;
     left_distance = 0xffff;
-    int sleep_time = 0x6000;
     
     set_right_speed(255);
     set_left_speed(255);
-    sleep(sleep_time);
-    int max_up_right_period =  right_front_period();
-    int max_up_left_period = left_rear_period();
+    sleep(10000);
+    int max_up_right_period =  right_period();
+    int max_up_left_period = left_period();
 
-    desired_period = (max_up_right_period + max_up_left_period)/2;
+    desired_period = (max_up_right_period + max_up_left_period);
 }
 
 void stop_calibration(){
@@ -232,20 +257,23 @@ void stop_calibration(){
     right_distance = 0xffff;
     left_distance = 0xffff;
 
+
+    // TODO max_stop_speed should be set to MIN_SPEED
+
     set_right_speed(max_stop_speed);
     set_left_speed(max_stop_speed);
-    sleep(10000);
-    int last_encoder = left_rear_encoder_count();
-    sleep(10000);
-    while(last_encoder != left_rear_encoder_count()){
+    sleep(5000);
+    int last_encoder = left_encoder_count();
+    sleep(5000);
+    while(last_encoder != left_encoder_count()){
         max_stop_speed+=20;
         set_right_speed(max_stop_speed);
         set_left_speed(max_stop_speed);
-        last_encoder = left_rear_encoder_count();
-        sleep(10000);
+        last_encoder = left_encoder_count();
+        sleep(5000);
     }
  
-    sleep(20000);
+    sleep(5000);
 
     right_distance = 0;
     left_distance = 0;

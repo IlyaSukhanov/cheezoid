@@ -10,10 +10,10 @@
 
 void configure_encoders();
 unsigned int enc_flag_check();
-int left_rear_encoder_count();
-int right_front_encoder_count();
-int left_rear_period();
-int right_front_period();
+unsigned int left_encoder_count();
+unsigned int right_encoder_count();
+unsigned int left_period();
+unsigned int right_period();
 
 #endif	/* ENCODER_FEEDBACK_H */
 

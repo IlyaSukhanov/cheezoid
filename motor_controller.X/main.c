@@ -67,6 +67,8 @@ int main(int argc, char** argv) {
 
     drive_calibration();
     move(96,0);
+    //move(0,96);
+    //move(0,-96);
 
     while(1)
     {

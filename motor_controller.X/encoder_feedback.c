@@ -46,15 +46,15 @@ void configure_encoders(){
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
     ReadCapture1(&interrupt1_times[0]);
     interrupt1_period = interrupt1_times[0] - interrupt1_times[1];
-    right_drive_tick(1, interrupt1_period);
+    right_drive_tick(1, interrupt1_period, interrupt8_period);
     IFS0bits.IC1IF = 0;
 }
 
-int right_front_encoder_count(){
+unsigned int right_encoder_count(){
     return interrupt1_count;
 }
 
-int right_front_period(){
+unsigned int right_period(){
     return interrupt1_period;
 }
 
@@ -69,14 +69,14 @@ void __attribute__((__interrupt__, no_auto_psv)) _IC8Interrupt(void){
     ReadCapture8(&interrupt8_times[0]);
     interrupt8_count++;
     interrupt8_period = interrupt8_times[0] - interrupt8_times[1];
-    left_drive_tick(1, interrupt8_period);
+    left_drive_tick(1, interrupt8_period, interrupt1_period);
     IFS1bits.IC8IF = 0;
 }
 
-int left_rear_encoder_count(){
+unsigned int left_encoder_count(){
     return interrupt8_count;
 }
 
-int left_rear_period(){
+unsigned int left_period(){
     return interrupt8_period;
 }
