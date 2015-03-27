@@ -2,7 +2,7 @@ import time
 import datetime
 import os
 import sys
-
+from cheezoid import Cheezoid, FrontCommands
 
 RUNNING = True
 PIPENAME = "/tmp/cheese_plate"
@@ -22,18 +22,21 @@ def create_fifo(pipename):
     fifo = os.fdopen(fd, 'r')
     return fifo
 
-def do_cmd(cmd):
+def do_cmd(cheezoid, cmd):
     print(datetime.datetime.now())
     print("Executing: %s" % cmd)
+    front_cmd = FrontCommands.cmd_factory(cmd)
+    cheezoid.execute_front_cmd(front_cmd)
     sys.stdout.flush()
 
 def main():
+    cheezoid = Cheezoid()
     fifo = create_fifo(PIPENAME)
     while(RUNNING):
         line = fifo.readline()  # blocking
         cmd = line.strip()
         if cmd != "":
-            do_cmd(cmd)
+            do_cmd(cheezoid, cmd)
         else:
             time.sleep(1)
     fifo.close()
