@@ -15,8 +15,8 @@ function log() {
 
 function copy_files() {
   log "Deploying ${DIR} to ${PI_HOSTNAME}..."
-  ssh -n ${SSH_DEST} "rm -rf ~/cheezoid/"
-  rsync -v -r --exclude=".*" --exclude=".*/" "${DIR}" ${SSH_DEST}:.
+  #ssh -n ${SSH_DEST} "rm -rf ~/cheezoid/"
+  rsync -v --exclude=".*" --exclude=".*/" --update --archive "${DIR}" ${SSH_DEST}:.
 }
 
 function restart_services() {
