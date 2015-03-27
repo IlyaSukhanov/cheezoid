@@ -72,7 +72,7 @@
                     var cmDist = getLineLen(prevX,prevY,currentX,currentY) / scale;
                     cmDist = Math.round(cmDist*100)/100;
                     updateStatusBar(createCmdString(angleDiff,cmDist));
-                    postCmd(angleDiff,cmDist)
+                    postCmd(createCmdString(angleDiff,cmDist))
 
                 }
             }
