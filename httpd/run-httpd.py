@@ -13,22 +13,39 @@ def hello():
     msg = """
     <html><head><title>Cheezoid</title></head>
     <body><h3>cheezoid httpd controller</h3>
-    RESTful endpoints, POST to send, GET to receive<br>
+
     For example:<br>
+    <ul>
+    <li>
+    Make current location the origin<br>
+    <code>
+    curl -X POST --data 'set' -H 'Content-type: text/plain' %s:5000/cmd
+    </code>
+    </li>
+    <li>
+    Move cheezoid back to origin<br>
     <code>
     curl -X POST --data 'reset' -H 'Content-type: text/plain' %s:5000/cmd
     </code>
-    or <br>
+    </li>
+    <li>
+    Move cheezoid back to origin then draw a line<br>
     <code>
     curl -X POST --data 'reset\\n pen down\\n move (13, 97)\\n pen up\\n' -H 'Content-type: text/plain' %s:5000/cmd
     </code>
+    </li>
+    </ul>
+    <br>
+    Below are RESTful endpoints, POST to send, GET to receive<br>
     <ul>
     <li>/status to view cheezoid status</li>
     <li>/cmd to send command</li>
         <ul>
-        <li>move (relative angle in degree, relative distance in cm)</li>
-        <li>pen (up/down) </li>
-        <li>reset</li>
+        <li>set: make current position origin. and orient cheezoid correctly</li>
+        <li>move (relative angle in degree, relative distance in cm): orient cheezoid at angel of param 1 degrees to vertical Y
+        then move distance in param 2 in cm </li>
+        <li>pen [up/down]: put pen down or pen up </li>
+        <li>reset: move cheezoid back to origin and oriented </li>
         </ul>
     <li>/svg to send svg</li>
     <li>/canvas to GUI</li>
@@ -36,7 +53,7 @@ def hello():
     </body>
     </html>
 """
-    return msg % (hostname, hostname)
+    return msg % (hostname, hostname, hostname)
 
 @app.route("/cmd", methods=['POST', 'GET'])
 def cmd_process():

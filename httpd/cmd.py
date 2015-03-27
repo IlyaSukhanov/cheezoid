@@ -1,13 +1,14 @@
 import os
 import sys
+import re
 
 PIPENAME = '/tmp/cheese_plate'
 
 def create_fifo(pipename):
     if not os.path.exists(pipename):
-        os.mkfifo(pipename, 0666)
+        os.mkfifo(pipename, 0600)
     else:
-        os.chmod(pipename, 0666)
+        os.chmod(pipename, 0600)
     fd = os.open(pipename, os.O_RDWR|os.O_NONBLOCK)
     fifo = os.fdopen(fd, 'w')
     return fifo
@@ -28,7 +29,7 @@ def sanitize_cmd(input_cmd):
         distance = distance in centimeters. floats > 0
     pen [action]
          action = 'up', 'down'
-
+    set
     reset
     """
     results = []
@@ -39,32 +40,23 @@ def sanitize_cmd(input_cmd):
     print(cmds)
     for cmd in cmds:
         cmd = cmd.strip()
-        if cmd[0:5] == 'reset':
-            results.append(cmd[0:5])
-        elif cmd[0:3] == 'pen':
-            if cmd[3:].strip() in ['up', 'down']:
-                results.append(cmd[0:3] + ' ' + cmd[3:].strip())
-        elif cmd[0:4] == 'move':
-            params = cmd[4:].strip()
+        if re.match('^set\s*$', cmd):
+            results.append('set')
+        elif re.match('^reset\s*$', cmd):
+            results.append('reset')
+        elif re.match('^pen\s*(up|down)', cmd):
+            match = re.match('^pen\s*(up|down)', cmd)
+            results.append('pen %s' % match.groups()[0])
+        elif re.match('^move\s*\(\s*([^,\(\)]+)\s*,\s*([^,\(\)]+)\s*\)$', cmd):
+            # check value range. reject bad one
             try:
-                if params[0] == '(' and params[-1] == ')' and params.index(",") >= 0:
-                    (degree_str, distance_str) = params[1:-1].split(",")
-                    distance = float(distance_str)
-                    degree = float(degree_str)
-                    # degree has to be -180.0 to 180
-                    if degree > 180 or degree < -180:
-                        pass
-                    # distance has to  > 0
-                    elif distance <= 0:
-                        pass
-                    else:
-                        results.append("move (%s, %s)" %(str(degree), str(distance)))
+                match = re.match('^move\s*\(\s*([^,\(\)]+)\s*,\s*([^,\(\)]+)\s*\)$', cmd)
+                degree = float(match.groups()[0])
+                distance = float(match.groups()[1])
+                if (degree < 180 and degree > -180 and distance > 0):
+                    results.append('move (%s, %s)' % (str(degree), str(distance)))
             except ValueError as err:
                 pass
-            else:
-                pass
-        else:
-            pass
     print("sanitized cmds")
     print(results)
     sys.stdout.flush()
