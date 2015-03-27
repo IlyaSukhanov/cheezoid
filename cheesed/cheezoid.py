@@ -40,7 +40,7 @@ class Cheezoid(object):
             all_vectors.append((angle_distance[1] * math.cos(angle_in_radian),
                                angle_distance[1] * math.sin(angle_in_radian)))
 
-        print(all_vectors)
+        #print(all_vectors)
         self._current_coords = (sum([x[0] for x in all_vectors]),
                                sum([x[1] for x in all_vectors]))
 
@@ -64,8 +64,8 @@ class Cheezoid(object):
             for cmd in cmds:
                 # to be added execute moves to move back origin
                 pass
-        print(self._total_moves)
-        print(self._total_cmds)
+        #print(self._total_moves)
+        #print(self._total_cmds)
 
     def move(self, move_cmd):
         print('sending move command(s): %s' % move_cmd)
