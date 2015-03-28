@@ -15,7 +15,7 @@ function log() {
 
 function copy_files() {
   log "Deploying ${DIR} to ${PI_HOSTNAME}..."
-  rsync -v --exclude=".*" --exclude=".*/" --update --archive --delete "${DIR}" ${SSH_DEST}:.
+  rsync -v --exclude=".*" --exclude=".*/" --exclude="doc" --exclude="pic" --update --archive --delete "${DIR}" ${SSH_DEST}:.
 }
 
 function restart_services() {
