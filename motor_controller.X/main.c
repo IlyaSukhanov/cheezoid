@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   pwm.c
  *
  * Created on March 3, 2015, 6:36 PM
@@ -66,16 +66,14 @@ int main(int argc, char** argv) {
     configure_command_control();
 
     drive_calibration();
-    //move(96,0);
-    //move(0,96);
-    //move(0,-96);
 
     int *move_parameters = 0;
     while(1){
         move_parameters = read_spi_buffer();
         if(move_parameters){
-            move(move_parameters[0], move_parameters[1]); 
+            move(move_parameters[0], move_parameters[1]);
         }
+        ClrWdt();
     }
     return 0;
 }

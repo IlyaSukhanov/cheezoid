@@ -35,14 +35,14 @@ void __attribute__((__interrupt__, no_auto_psv)) _SPI1Interrupt(void) {
 
 // return address of buffer if its full, else NULL
 int *read_spi_buffer(){
-    WriteSPI1(0x0000); 
+    WriteSPI1(0x0000);
     if (spi_buff_full){
         spi_buff_full = 0;
         return spi_buffer;
     }else{
         return 0;
     }
-} 
+}
 
 void configure_command_control(){
     TRISBbits.TRISB9 = 1;

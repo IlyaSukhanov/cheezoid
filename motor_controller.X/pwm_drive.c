@@ -19,7 +19,7 @@ int max_stop_speed = 0;
 
 //in flat land mode these should be set to the same value
 #define ADVANTAGED_SPEED 255
-#define DISADVANTAGED_SPEED 255 
+#define DISADVANTAGED_SPEED 255
 #define ADVANTAGED_SPEED_ADJUST 10
 #define DISADVANTAGED_SPEED_ADJUST 20
 
@@ -101,7 +101,7 @@ void right_speed_adjust(const int our_period, const int their_period){
     if (right_desired_direction == -1 && left_desired_direction == 1){
         target_period = their_period;
     }else{
-        target_period = desired_period; 
+        target_period = desired_period;
     }
     if (our_period < target_period){
         //speed down
@@ -133,7 +133,7 @@ void left_speed_adjust(const int our_period, const int their_period){
     if (left_desired_direction == -1 && right_desired_direction == 1){
         target_period = their_period;
     }else{
-        target_period = desired_period; 
+        target_period = desired_period;
     }
     if (our_period < target_period){
         //speed down
@@ -240,7 +240,7 @@ void move(const int rotate_distance,const int drive_distance){
 void wheel_period_calibration(){
     right_distance = 0xffff;
     left_distance = 0xffff;
-    
+
     set_right_speed(255);
     set_left_speed(255);
     sleep(10000);
@@ -272,7 +272,7 @@ void stop_calibration(){
         last_encoder = left_encoder_count();
         sleep(5000);
     }
- 
+
     sleep(5000);
 
     right_distance = 0;
