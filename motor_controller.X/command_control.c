@@ -4,18 +4,45 @@
 
 int spi_buffer[2];
 int spi_index = 0;
+int spi_buff_full = 0;
+int spi_write = 0;
 
-void __attribute__((__interrupt__, no_auto_psv)) _SPI1Interrupt(void)
-{
+void __attribute__((__interrupt__, no_auto_psv)) _SPI1Interrupt(void) {
     while(!DataRdySPI1());
-    spi_buffer[spi_index++]=ReadSPI1();
-    if (spi_index >= 2){
-        spi_index = 0;
-        move(spi_buffer[0], spi_buffer[1]);
+    if(spi_buff_full){
+        //discard data
+        ReadSPI1();
+        spi_index++;
+        if (spi_index >= 2){
+            spi_index = 0;
+            WriteSPI1(0xbeef);
+        }else{
+            WriteSPI1(0xcafe);
+        }
+    }else{
+        spi_buffer[spi_index++]=ReadSPI1();
+        if (spi_index >= 2){
+            spi_index = 0;
+            spi_buff_full = 1;
+            WriteSPI1(0xbabe);
+        }else{
+            WriteSPI1(0x0000);
+        }
     }
     IFS0bits.SPI1IF = 0;
     SPI1STATbits.SPIROV = 0;
 }
+
+// return address of buffer if its full, else NULL
+int *read_spi_buffer(){
+    WriteSPI1(0x0000); 
+    if (spi_buff_full){
+        spi_buff_full = 0;
+        return spi_buffer;
+    }else{
+        return 0;
+    }
+} 
 
 void configure_command_control(){
     TRISBbits.TRISB9 = 1;

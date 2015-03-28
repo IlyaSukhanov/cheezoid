@@ -70,9 +70,12 @@ int main(int argc, char** argv) {
     //move(0,96);
     //move(0,-96);
 
-    while(1)
-    {
-        Idle()
+    int *move_parameters = 0;
+    while(1){
+        move_parameters = read_spi_buffer();
+        if(move_parameters){
+            move(move_parameters[0], move_parameters[1]); 
+        }
     }
     return 0;
 }

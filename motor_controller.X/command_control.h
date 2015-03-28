@@ -9,6 +9,7 @@
 #define	COMMAND_CONTROL_H
 
 void configure_command_control();
+int * read_spi_buffer();
 
 
 #endif	/* COMMAND_CONTROL_H */
