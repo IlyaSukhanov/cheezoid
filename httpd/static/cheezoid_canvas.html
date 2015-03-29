@@ -2,13 +2,26 @@
 <html>
     <head>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <p>This page assumes cheezoid's starting position is facing up 600x600 px</p>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     </head>
-    <body>
-        <canvas id="image" width="600" height="600" style="border:1px solid #000000"></canvas>
-        px to cm: <input type="text" id="scale" value="40"></input>
-        <input type="radio" id="drawbutton" name="drawbutton">Draw & Move</input>
-        <input type="radio" id="movebutton" name="movebutton">Just Move</input>
+    <body background="static/cheezoid_on_whiteboard.jpg" width="100%">
+
+        <center>
+        <p style="font-size: 30px">Cheezoid drawing board</p>
+
+        <p><canvas id="image" width="600" height="600" style="border:10px dotted orange"></canvas></p>
+
+        <div class="container col-md-2 col-md-offset-5">
+            <div class="input-group">
+                <span class="input-group-addon" id="px_to_cm">px to cm:</span>
+                <input type="text" class="form-control" aria-describedby="px_to_cm" id="scale" value="40" size="10"></input>
+            </div>
+            <input type="radio" id="drawbutton" name="drawbutton">Draw & Move</input><br/>
+            <input type="radio" id="movebutton" name="movebutton">Just Move</input>
+            <p>This page assumes cheezoid's starting position is facing up 600x600 px</p>
+        </div>
+        </center>
+
         <script type="text/javascript">
             var canvas, context;
             var prevX = 0,
@@ -30,8 +43,8 @@
                 prevX = currentX
                 prevY = currentY
                 //set new current mouse click
-                currentX = e.clientX - canvas.offsetLeft;
-                currentY = e.clientY - canvas.offsetTop;
+                currentX = e.clientX - canvas.offsetLeft - Number(canvas.style.borderWidth.replace("px",""));
+                currentY = e.clientY - canvas.offsetTop - Number(canvas.style.borderWidth.replace("px",""));
                 drawAndSendCmd(currentX,currentY);
             }
 
