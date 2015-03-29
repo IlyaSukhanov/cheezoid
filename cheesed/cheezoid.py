@@ -1,6 +1,11 @@
 import math
 from rasp_controller.drive import CheezoidDrive
-from rasp_controller.pen import CheezoidPenControl
+from rasp_controller.pen import (
+    CheezoidPenControl,
+    PEN_DOWN,
+    PEN_DOWN_HARD,
+    PEN_UP,
+)
 import time
 
 
@@ -99,8 +104,11 @@ class Cheezoid(object):
 
         angle_ticks = int(-1.0 * angle_degrees * 96 / 90.0)
         distance_ticks = int(distance_cm * 48 / 1.37)
-        with CheezoidPenControl(pen_up=(self._pen_state == FrontCommands.UP)):
-            self._cheezoid_drive.move(angle_ticks, distance_ticks)
+        pen_state = PEN_UP if (self._pen_state == FrontCommands.UP) else PEN_DOWN
+        with CheezoidPenControl(mode=PEN_DOWN_HARD):
+            self._cheezoid_drive.move(angle_ticks, 0)
+        with CheezoidPenControl(mode=pen_state):
+            self._cheezoid_drive.move(0, distance_ticks)
         print('cheezoid is now at coord: %s' % ",".join(map(str, self.where_am_i())))
 
     def move_pen(self, direction):

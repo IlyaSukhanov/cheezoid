@@ -30,9 +30,8 @@ class CheezoidDrive():
         time.sleep(.1)
         return resp
         
-    def move(self, rotation_distance, drive_distance):
-        reply_sum = 1
-        while reply_sum != 0:
+    def _move(self, rotation_distance, drive_distance):
+        while True:
             logging.debug("\tSending: move({0},{1})".format(rotation_distance, drive_distance))
             reply_sum = 0
             reply = [] 
@@ -41,15 +40,25 @@ class CheezoidDrive():
             logging.debug("\t\treply: {0}".format([hex(byte) for byte in reply]))
             for byte in reply:
                 if byte == 0:
+                    print("{0}=0".format(byte))
                     return
-            logging.debug("\t\treply_sum:\t{0}".format(reply_sum))
             time.sleep(.1)
+
+    def move(self, rotation_distance, drive_distance):
+        """
+        Send move command, followed by nonce moves to
+        ensure we fill buffer and get blocked 'till first one completes
+        """
+        self._move(rotation_distance, drive_distance)
+        self._move(0,0)
+        self._move(0,0)
 
 
 if __name__ == "__main__":
     drive = CheezoidDrive()
+    logging.basicConfig(level=logging.DEBUG)
     i=0;
     while i<3:
-        logging.debug("here1")
+        logging.debug("Next move")
         i+=1;
         drive.move(48,96)
