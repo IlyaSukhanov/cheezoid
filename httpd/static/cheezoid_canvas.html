@@ -14,7 +14,7 @@
         <div class="container col-md-2 col-md-offset-5">
             <div class="input-group">
                 <span class="input-group-addon" id="px_to_cm">px to cm:</span>
-                <input type="text" class="form-control" aria-describedby="px_to_cm" id="scale" value="40" size="10"></input>
+                <input type="text" class="form-control" aria-describedby="px_to_cm" id="scale" value="150" size="10"></input>
             </div>
             <input type="radio" id="drawbutton" name="drawbutton">Draw & Move</input><br/>
             <input type="radio" id="movebutton" name="movebutton">Just Move</input>
@@ -36,7 +36,7 @@
                 canvas = document.getElementById('image');
                 context = canvas.getContext('2d');
                 canvas.addEventListener('mousedown', mouseclick, false);
-                $('#movebutton').attr("checked", true);
+                $('#drawbutton').attr("checked", true);
             }
             function mouseclick(e){
                 //set new previous mouse click
