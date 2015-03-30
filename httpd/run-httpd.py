@@ -2,6 +2,7 @@ from flask import Flask, request
 from command import cmd_repl, create_fifo, PIPENAME
 import socket
 import sys
+from svg import from_svg_to_cmds
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -70,9 +71,21 @@ def cmd_process():
 def status_process():
     return "I'm alive!"
 
-@app.route("/svg")
+@app.route("/svg", methods=['GET', 'POST'])
 def svg_process():
-    return "Coming soon! ;)"
+    hostname = socket.gethostname()
+    if request.method == 'GET':
+        return """
+        <code>
+        curl -X POST --data [svg file] -H 'Content-Type: text/xml' %s/cmd
+        </code>
+        """ % hostname
+    elif request.method == 'POST':
+        body = request.data
+        cmds = from_svg_to_cmds(body)
+        return "%s\n" % ("\n".join(cmds))
+    else:
+        return "invalid method"
 
 @app.route("/canvas")
 def canvas_process():

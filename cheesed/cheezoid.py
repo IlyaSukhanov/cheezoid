@@ -12,7 +12,6 @@ TICKS_PER_CM = 48 / 1.37
 TICKS_PER_DEGREE = 94 / 90.0
 DEGREE_IN_RADIAN = 0.0174532925
 MAX_SUPPORTED_DEGREE = 90
-MIN_SUPPORTED_DEGREE = -90
 TOTAL_DEGREES = 360
 
 class Cheezoid(object):
@@ -80,32 +79,24 @@ class Cheezoid(object):
         elif front_cmd._cmd == FrontCommands.SET:
             self.set_current_position_as_origin()
         elif front_cmd._cmd == FrontCommands.RESET:
-            cmds = self.get_reset_moves()
-        #print(self._total_moves)
-        #print(self._total_cmds)
+            self.get_reset_moves()
 
     def move(self, move_cmd):
         print('sending move command(s): %s with pen %s' % (move_cmd, self._pen_state))
         (angle_degrees, distance_cm) = move_cmd.params
-        if angle_degrees < MAX_SUPPORTED_DEGREE and angle_degrees > MIN_SUPPORTED_DEGREE:
-            if not self._alignment:
-                distance_cm = -1 * distance_cm
 
-        if angle_degrees > MAX_SUPPORTED_DEGREE:
-            angle_degrees = angle_degrees - 180
+        print("in degrees:{0}".format(angle_degrees))
+        if abs(angle_degrees) >= MAX_SUPPORTED_DEGREE:
+            angle_degrees = (abs(angle_degrees)/angle_degrees) * (abs(angle_degrees) - 180)
             self._alignment = not self._alignment
-            if not self._alignment:
-                distance_cm = -1 * distance_cm
+        if not self._alignment:
+            distance_cm = -1 * distance_cm
+        print("out degrees:{0}".format(angle_degrees))
 
-        if angle_degrees < MIN_SUPPORTED_DEGREE:
-            angle_degrees = angle_degrees + 180
-            self._alignment = not self._alignment
-            if not self._alignment:
-                distance_cm = -1 * distance_cm
-
-        angle_ticks = int(-1.0 * angle_degrees * TICKS_PER_DEGREE)
+        angle_ticks = int(-angle_degrees * TICKS_PER_DEGREE)
         distance_ticks = int(distance_cm * TICKS_PER_CM)
         pen_state = PEN_UP if (self._pen_state == FrontCommands.UP) else PEN_DOWN
+
         with CheezoidPenControl(mode=PEN_DOWN_HARD):
             self._cheezoid_drive.move(angle_ticks, 0)
         with CheezoidPenControl(mode=pen_state):
