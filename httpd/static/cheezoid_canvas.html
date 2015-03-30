@@ -37,6 +37,8 @@
                 context = canvas.getContext('2d');
                 canvas.addEventListener('mousedown', mouseclick, false);
                 $('#movebutton').attr("checked", true);
+                // set current location as origin
+                postCmd("set");
             }
             function mouseclick(e){
                 //set new previous mouse click
