@@ -79,9 +79,7 @@ class Cheezoid(object):
         elif front_cmd._cmd == FrontCommands.SET:
             self.set_current_position_as_origin()
         elif front_cmd._cmd == FrontCommands.RESET:
-            cmds = self.get_reset_moves()
-        #print(self._total_moves)
-        #print(self._total_cmds)
+            self.get_reset_moves()
 
     def move(self, move_cmd):
         print('sending move command(s): %s with pen %s' % (move_cmd, self._pen_state))
@@ -89,10 +87,7 @@ class Cheezoid(object):
 
         print("in degrees:{0}".format(angle_degrees))
         if abs(angle_degrees) >= MAX_SUPPORTED_DEGREE:
-            if(angle_degrees < 0):
-                angle_degrees = angle_degrees + 180
-            elif(angle_degrees > 0):
-                angle_degrees = angle_degrees - 180
+            angle_degrees = (abs(angle_degrees)/angle_degrees) * (abs(angle_degrees) - 180)
             self._alignment = not self._alignment
         if not self._alignment:
             distance_cm = -1 * distance_cm
