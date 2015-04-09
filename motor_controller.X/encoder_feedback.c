@@ -23,10 +23,10 @@ unsigned int interrupt4_period = 0;
 
 void configure_encoders(){
     //Configure encoder feedback pins for input
-    TRISBbits.TRISB5 = 1;
     TRISBbits.TRISB6 = 1;
     TRISBbits.TRISB7 = 1;
     TRISBbits.TRISB8 = 1;
+    TRISBbits.TRISB9 = 1;
 
     //Turn on timer
     T3CONbits.TON = 1;
@@ -42,7 +42,8 @@ void configure_encoders(){
     //ConfigIntCapture8(IC_ENCODER_INTERRUPT);
 }
 
-//FR interrupt
+//Right A interrupt
+//IC1
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
     ReadCapture1(&interrupt1_times[0]);
     interrupt1_count++;
@@ -59,7 +60,7 @@ unsigned int right_period(){
     return interrupt1_period;
 }
 
-//FL interrupt
+//Left A interrupt
 //IC2
 void __attribute__((__interrupt__, no_auto_psv)) _IC2Interrupt(void){
     ReadCapture2(&interrupt2_times[0]);
@@ -77,7 +78,3 @@ unsigned int left_period(){
     return interrupt2_period;
 }
 
-//RR
-//IC7
-
-//RL read interrupt

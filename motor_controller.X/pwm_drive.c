@@ -25,18 +25,22 @@ int max_stop_speed = 0;
 
 void inline right_direction(unsigned int direction){
     if ( direction > 0 ){
-        direction = 1;
+        LATAbits.LATA0 = 0;
+        LATAbits.LATA1 = 1;
+    }else{
+        LATAbits.LATA0 = 1;
+        LATAbits.LATA1 = 0;
     }
-    LATAbits.LATA2 = direction;
-    LATBbits.LATB4 = direction;
 }
 
 void inline left_direction(unsigned int direction){
     if ( direction > 0 ){
-        direction = 1;
+        LATAbits.LATA2 = 0;
+        LATBbits.LATB4 = 1;
+    }else{
+        LATAbits.LATA2 = 1;
+        LATBbits.LATB4 = 0;
     }
-    LATAbits.LATA0 = direction;
-    LATAbits.LATA1 = direction;
 }
 
 // Handle interrupt for PWM timer
@@ -48,19 +52,15 @@ void configure_drive(){
     //Configure PWM pins for output
     TRISBbits.TRISB2 = 0;
     TRISBbits.TRISB3 = 0;
-    TRISBbits.TRISB12 = 0;
-    TRISBbits.TRISB13 = 0;
     //Disable Open Drain
     ODCBbits.ODCB2 = 0x0;
     ODCBbits.ODCB3 = 0x0;
-    ODCBbits.ODCB12 = 0x0;
-    ODCBbits.ODCB13 = 0x0;
 
     //Configure direction pins for output
-    TRISAbits.TRISA2 = 0;
-    TRISBbits.TRISB4 = 0;
     TRISAbits.TRISA0 = 0;
     TRISAbits.TRISA1 = 0;
+    TRISAbits.TRISA2 = 0;
+    TRISBbits.TRISB4 = 0;
     left_direction(0);
     right_direction(0);
 

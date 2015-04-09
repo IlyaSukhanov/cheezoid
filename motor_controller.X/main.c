@@ -14,7 +14,7 @@
 #include "command_control.h"
 
 /*
- * Pinout
+ * Pinout cheezoid platform 1
  * pin2     LF motor direction  (channel 2)
  * pin3     LR motor direction  (channel 4)
  * pin4     ????? occupied by microstick debugger
@@ -34,7 +34,27 @@
  * pin25    SPI CE0  green      RP14
  * pin23    LF motor speed  OC2 (channel 2)
  * pin24    RR motor speed  OC4 (channel 4)
-
+ *
+ * Pinout cheezoid platform 2
+ * pin2     white   l motor in1 RA0
+ * pin3     black   l motor in2 RA1
+ * pin4             occupied by microstick debugger
+ * pin5             occupied by microstick debugger
+ * pin6     brown   l motor d2  RP2
+ * pin7     yellow  r motor d2  RP3
+ * pin9     green   r motor in1 RA2
+ * pin10            won't flip bit
+ * pin11    blue    r motor in2 RB4
+ * pin15    white   l enc B     RP6
+ * pin16    gray    l enc A     RP7
+ * pin17    purple  r enc B     RP8
+ * pin18    blue    r enc A     RP9
+ * pin19    brown   ground
+ * pin21    yellow  SPI SCLK    RP10
+ * pin22    red     SPI MOSI    RP11
+ * pin23    orange  SPI MISO    RP12
+ * pin24    green   SPI CE0     RP13
+ *
  */
 
 int main(int argc, char** argv) {
@@ -44,21 +64,19 @@ int main(int argc, char** argv) {
     PPSUnLock;
     // map output compare to our pwm drive pins
     PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP2);
-    PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP3);
-    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP12);
-    PPSOutput(OUT_FN_PPS_OC4, OUT_PIN_PPS_RP13);
+    PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP3);
 
     //map input compare to out encoder feedback pins
-    PPSInput(IN_FN_PPS_IC1, IN_PIN_PPS_RP5);
-    PPSInput(IN_FN_PPS_IC2, IN_PIN_PPS_RP6);
-    PPSInput(IN_FN_PPS_IC7, IN_PIN_PPS_RP7);
-    PPSInput(IN_FN_PPS_IC8, IN_PIN_PPS_RP8);
+    PPSInput(IN_FN_PPS_IC8, IN_PIN_PPS_RP6);
+    PPSInput(IN_FN_PPS_IC2, IN_PIN_PPS_RP7);
+    PPSInput(IN_FN_PPS_IC7, IN_PIN_PPS_RP8);
+    PPSInput(IN_FN_PPS_IC1, IN_PIN_PPS_RP9);
 
     //Map SPI pins
-    PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP11);
-    PPSInput(IN_FN_PPS_SDI1, IN_PIN_PPS_RP10);
-    PPSInput(IN_FN_PPS_SCK1, IN_PIN_PPS_RP9);
-    PPSInput(IN_FN_PPS_SS1, IN_PIN_PPS_RP14);
+    PPSOutput(OUT_FN_PPS_SDO1, OUT_PIN_PPS_RP12);
+    PPSInput(IN_FN_PPS_SDI1, IN_PIN_PPS_RP11);
+    PPSInput(IN_FN_PPS_SCK1, IN_PIN_PPS_RP10);
+    PPSInput(IN_FN_PPS_SS1, IN_PIN_PPS_RP13);
     PPSLock;
 
     configure_drive();
