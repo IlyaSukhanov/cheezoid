@@ -83,8 +83,16 @@ int main(int argc, char** argv) {
     configure_encoders();
     configure_command_control();
 
-    drive_calibration();
-
+    //drive_calibration();
+    /*
+    int i = 0;
+    while(i<10){
+        move(90,0);
+        move(-90,0);
+        i++;
+    }
+    */
+    move(0,9999);
     int *move_parameters = 0;
     while(1){
         move_parameters = read_spi_buffer();

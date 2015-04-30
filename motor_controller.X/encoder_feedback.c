@@ -4,7 +4,7 @@
 #include "encoder_feedback.h"
 
 //Configure Encoders
-#define IC_ENCODER_CONFIG IC_IDLE_CON & IC_TIMER3_SRC &  IC_INT_2CAPTURE & IC_EVERY_EDGE
+#define IC_ENCODER_CONFIG IC_IDLE_CON & IC_TIMER3_SRC &  IC_INT_2CAPTURE & IC_EVERY_RISE_EDGE
 #define IC_ENCODER_INTERRUPT IC_INT_PRIOR_2 & IC_INT_ON
 #define ENCODER_BUFFER_LENGTH 2
 
@@ -47,7 +47,7 @@ void configure_encoders(){
 void __attribute__((__interrupt__, no_auto_psv)) _IC1Interrupt(void){
     ReadCapture1(&interrupt1_times[0]);
     interrupt1_count++;
-    interrupt1_period = interrupt1_times[0] - interrupt1_times[1];
+    interrupt1_period = interrupt1_times[1] - interrupt1_times[0];
     right_drive_tick(1, interrupt1_period, interrupt2_period);
     IFS0bits.IC1IF = 0;
 }
@@ -65,7 +65,7 @@ unsigned int right_period(){
 void __attribute__((__interrupt__, no_auto_psv)) _IC2Interrupt(void){
     ReadCapture2(&interrupt2_times[0]);
     interrupt2_count++;
-    interrupt2_period = interrupt2_times[0] - interrupt2_times[1];
+    interrupt2_period = interrupt2_times[1] - interrupt2_times[0];
     left_drive_tick(1, interrupt2_period, interrupt1_period);
     IFS0bits.IC2IF = 0;
 }

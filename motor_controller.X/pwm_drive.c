@@ -7,23 +7,21 @@
 
 //PWM configuration
 #define OC_PWM_CONFIG OC_IDLE_CON & OC_TIMER2_SRC & OC_PWM_FAULT_PIN_DISABLE
-#define MIN_SPEED 50
 unsigned int right_distance = 0;
 unsigned int left_distance = 0;
-unsigned int left_speed = 0;
-unsigned int right_speed = 0;
-unsigned int desired_period = 0;
-int right_desired_direction = 0;
-int left_desired_direction = 0;
+int left_speed = 0;
+int right_speed = 0;
 int max_stop_speed = 0;
 
-//in flat land mode these should be set to the same value
-#define ADVANTAGED_SPEED 255
-#define DISADVANTAGED_SPEED 255
-#define ADVANTAGED_SPEED_ADJUST 10
-#define DISADVANTAGED_SPEED_ADJUST 20
+#define NOMINAL_SPEED 170
+#define SLOW_SPEED 170
+#define MIN_SPEED 120
+#define SPEED_ADJUST 1
 
-void inline right_direction(unsigned int direction){
+int nominal_period = 0;
+int slow_period = 0;
+
+void inline left_direction(unsigned int direction){
     if ( direction > 0 ){
         LATAbits.LATA0 = 0;
         LATAbits.LATA1 = 1;
@@ -33,13 +31,13 @@ void inline right_direction(unsigned int direction){
     }
 }
 
-void inline left_direction(unsigned int direction){
+void inline right_direction(unsigned int direction){
     if ( direction > 0 ){
-        LATAbits.LATA2 = 0;
-        LATBbits.LATB4 = 1;
-    }else{
         LATAbits.LATA2 = 1;
         LATBbits.LATB4 = 0;
+    }else{
+        LATAbits.LATA2 = 0;
+        LATBbits.LATB4 = 1;
     }
 }
 
@@ -73,17 +71,6 @@ void configure_drive(){
     T2CONbits.TON = 1;
 }
 
-void set_right_speed(int speed){
-    right_direction(speed > 0);
-    right_speed = speed;
-    speed=abs(speed);
-    if(speed < MIN_SPEED){
-        speed = 0;
-    }
-    OpenOC1(OC_PWM_CONFIG, speed, speed);
-    OpenOC3(OC_PWM_CONFIG, speed, speed);
-}
-
 void set_left_speed(int speed){
     left_direction(speed > 0);
     left_speed = speed;
@@ -91,87 +78,53 @@ void set_left_speed(int speed){
     if(speed < MIN_SPEED){
         speed = 0;
     }
+    OpenOC1(OC_PWM_CONFIG, speed, speed);
+}
+
+void set_right_speed(int speed){
+    right_direction(speed > 0);
+    right_speed = speed;
+    speed=abs(speed);
+    if(speed < MIN_SPEED){
+        speed = 0;
+    }
     OpenOC2(OC_PWM_CONFIG, speed, speed);
-    OpenOC4(OC_PWM_CONFIG, speed, speed);
 }
 
-void right_speed_adjust(const int our_period, const int their_period){
-    int target_period;
-    int new_speed = right_speed;
-    if (right_desired_direction == -1 && left_desired_direction == 1){
-        target_period = their_period;
-    }else{
-        target_period = desired_period;
-    }
-    if (our_period < target_period){
+int speed_adjust(const int speed, const int our_period, const int their_period){
+    if (our_period < their_period){
         //speed down
-        if (right_desired_direction < 0 ){
-            //going down
-            new_speed += ADVANTAGED_SPEED_ADJUST;
-        }else if(right_desired_direction > 0){
-            //going up
-            new_speed -= DISADVANTAGED_SPEED_ADJUST;
+        if (speed  < 0 ){
+            // going down
+            return speed + SPEED_ADJUST;
+        }else if(speed > 0){
+            // going up
+            return speed - SPEED_ADJUST;
         }
-    } else if(our_period > target_period){
+    } else if(our_period > their_period){
         //speed up
-        if (right_desired_direction < 0 ){
-            //going down
-            new_speed -= DISADVANTAGED_SPEED_ADJUST;
-        }else if(right_desired_direction > 0){
-            //going up
-            new_speed += ADVANTAGED_SPEED_ADJUST;
+        if (speed < 0 ){
+            // going down
+            return speed - SPEED_ADJUST;
+        }else if(speed > 0){
+            // going up
+            return speed + SPEED_ADJUST;
         }
-    }else{
-        return;
     }
-    set_right_speed(new_speed);
-}
-
-void left_speed_adjust(const int our_period, const int their_period){
-    int target_period;
-    int new_speed = left_speed;
-    if (left_desired_direction == -1 && right_desired_direction == 1){
-        target_period = their_period;
-    }else{
-        target_period = desired_period;
-    }
-    if (our_period < target_period){
-        //speed down
-        if (left_desired_direction < 0 ){
-            //going down
-            new_speed += DISADVANTAGED_SPEED_ADJUST;
-        }else if(left_desired_direction > 0){
-            //going up
-            new_speed -= ADVANTAGED_SPEED_ADJUST;
-        }
-    } else if(our_period > target_period){
-        //speed up
-        if (left_desired_direction < 0 ){
-            //going down
-            new_speed -= ADVANTAGED_SPEED_ADJUST;
-        }else if(left_desired_direction > 0){
-            //going up
-            new_speed += DISADVANTAGED_SPEED_ADJUST;
-        }
-    }else{
-        return;
-    }
-    set_left_speed(new_speed);
+    return speed; 
 }
 
 unsigned int is_drive_active(){
-    return right_desired_direction != 0 && left_desired_direction != 0;
+    return right_distance > 0 && left_distance > 0;
 }
 
 void right_stop(){
     right_distance = 0;
-    right_desired_direction = 0;
     set_right_speed(max_stop_speed);
 }
 
 void left_stop(){
     left_distance = 0;
-    left_desired_direction = 0;
     set_left_speed(max_stop_speed);
 }
 
@@ -180,10 +133,8 @@ void left_drive(const int distance, const int speed){
     if (distance == 0) {
         left_stop();
     } if (distance < 0){
-        left_desired_direction = -1;
         set_left_speed(-speed);
     }else if(distance > 0 ){
-        left_desired_direction = 1;
         set_left_speed(speed);
     }
 }
@@ -193,10 +144,8 @@ void right_drive(const int distance, const int speed){
     if (distance == 0) {
         right_stop();
     } if (distance < 0){
-        right_desired_direction = -1;
         set_right_speed(-speed);
     }else if(distance > 0 ){
-        right_desired_direction = 1;
         set_right_speed(speed);
     }
 }
@@ -204,16 +153,34 @@ void right_drive(const int distance, const int speed){
 void right_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
     if (ticks < right_distance){
         right_distance -= ticks;
-        //right_speed_adjust(our_period, their_period);
+        if(right_distance<30){
+            if(right_speed<0){
+                set_right_speed(-SLOW_SPEED);
+            }else{
+                set_right_speed(SLOW_SPEED);
+            }
+        }else{
+            speed_adjust(right_speed, our_period, their_period);
+            set_right_speed(right_speed);
+        }
     } else {
         right_stop();
     }
 }
 
 void left_drive_tick(const unsigned int ticks, const int our_period, const int their_period){
+    //right_drive(10, NOMINAL_SPEED);
     if (ticks < left_distance){
         left_distance -= ticks;
-        //left_speed_adjust(our_period, their_period);
+        if(left_distance<30){
+            if(left_speed<0){
+                set_left_speed(-SLOW_SPEED);
+            }else{
+                set_left_speed(SLOW_SPEED);
+            }
+        }else{
+            set_left_speed(speed_adjust(left_speed, our_period, their_period));
+        }
     } else {
         left_stop();
     }
@@ -222,32 +189,19 @@ void left_drive_tick(const unsigned int ticks, const int our_period, const int t
 void move(const int rotate_distance,const int drive_distance){
     if(rotate_distance != 0){
         if(rotate_distance < 0){
-            left_drive(-rotate_distance, DISADVANTAGED_SPEED);
-            right_drive(rotate_distance, ADVANTAGED_SPEED);
+            left_drive(-rotate_distance, NOMINAL_SPEED);
+            right_drive(rotate_distance, NOMINAL_SPEED);
         }else{
-            left_drive(-rotate_distance, ADVANTAGED_SPEED);
-            right_drive(rotate_distance, DISADVANTAGED_SPEED);
+            left_drive(-rotate_distance, NOMINAL_SPEED);
+            right_drive(rotate_distance, NOMINAL_SPEED);
         }
         while(is_drive_active());
     }
     if (drive_distance != 0){
-        left_drive(drive_distance, ADVANTAGED_SPEED);
-        right_drive(drive_distance, ADVANTAGED_SPEED);
+        left_drive(drive_distance, NOMINAL_SPEED);
+        right_drive(drive_distance, NOMINAL_SPEED);
         while(is_drive_active());
     }
-}
-
-void wheel_period_calibration(){
-    right_distance = 0xffff;
-    left_distance = 0xffff;
-
-    set_right_speed(255);
-    set_left_speed(255);
-    sleep(10000);
-    int max_up_right_period =  right_period();
-    int max_up_left_period = left_period();
-
-    desired_period = (max_up_right_period + max_up_left_period);
 }
 
 void stop_calibration(){
@@ -278,28 +232,24 @@ void stop_calibration(){
     right_distance = 0;
     left_distance = 0;
 
-}
-
-void drive_calibration(){
-    stop_calibration();
-    wheel_period_calibration();
     set_right_speed(max_stop_speed);
     set_left_speed(max_stop_speed);
 }
 
 /*
-void turnClockwise(int stop_speed) {
+void period_calibration(){
+    //Set distance high so we don't trigger interrupt based stop
     right_distance = 0xffff;
     left_distance = 0xffff;
-    set_left_speed(255);
-    set_right_speed(stop_speed);
+    set_right_speed(NOMINAL_SPEED);
+    set_left_speed(NOMINAL_SPEED);
+    sleep(5000);
 
-    sleep(20000);
-    set_left_speed(stop_speed-10);
-    set_right_speed(stop_speed-10);
+    nominal_period = 
 
-    sleep(0xfff);
-    right_distance = 0;
-    left_distance = 0;
 }
 */
+
+void drive_calibration(){
+    //stop_calibration();
+}
