@@ -21,22 +21,28 @@ int max_stop_speed = 0;
 int nominal_period = 0;
 int slow_period = 0;
 
-void inline left_direction(unsigned int direction){
-    if ( direction > 0 ){
-        LATAbits.LATA0 = 0;
-        LATAbits.LATA1 = 1;
-    }else{
+void inline left_direction(int direction){
+    if ( direction < 0){
         LATAbits.LATA0 = 1;
         LATAbits.LATA1 = 0;
+    } else if ( direction > 0 ){
+        LATAbits.LATA0 = 0;
+        LATAbits.LATA1 = 1;
+    } else {
+        LATAbits.LATA0 = 1;
+        LATAbits.LATA1 = 1;
     }
 }
 
-void inline right_direction(unsigned int direction){
-    if ( direction > 0 ){
+void inline right_direction(int direction){
+    if ( direction < 0){
+        LATAbits.LATA2 = 0;
+        LATBbits.LATB4 = 1;
+    } else if ( direction > 0 ){
         LATAbits.LATA2 = 1;
         LATBbits.LATB4 = 0;
-    }else{
-        LATAbits.LATA2 = 0;
+    } else {
+        LATAbits.LATA2 = 1;
         LATBbits.LATB4 = 1;
     }
 }
@@ -72,23 +78,25 @@ void configure_drive(){
 }
 
 void set_left_speed(int speed){
-    left_direction(speed > 0);
+    int aspeed = abs(speed);
     left_speed = speed;
-    speed=abs(speed);
-    if(speed < MIN_SPEED){
+    if ( aspeed < MIN_SPEED ){
         speed = 0;
+        aspeed = 255;
     }
-    OpenOC1(OC_PWM_CONFIG, speed, speed);
+    left_direction(speed);
+    OpenOC1(OC_PWM_CONFIG, aspeed, aspeed);
 }
 
 void set_right_speed(int speed){
-    right_direction(speed > 0);
+    int aspeed = abs(speed);
     right_speed = speed;
-    speed=abs(speed);
-    if(speed < MIN_SPEED){
+    if ( aspeed < MIN_SPEED ){
         speed = 0;
+        aspeed = 255;
     }
-    OpenOC2(OC_PWM_CONFIG, speed, speed);
+    right_direction(speed);
+    OpenOC2(OC_PWM_CONFIG, aspeed, aspeed);
 }
 
 int speed_adjust(const int speed, const int our_period, const int their_period){
@@ -120,12 +128,12 @@ unsigned int is_drive_active(){
 
 void right_stop(){
     right_distance = 0;
-    set_right_speed(max_stop_speed);
+    set_right_speed(0);
 }
 
 void left_stop(){
     left_distance = 0;
-    set_left_speed(max_stop_speed);
+    set_left_speed(0);
 }
 
 void left_drive(const int distance, const int speed){
