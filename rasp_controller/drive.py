@@ -32,7 +32,7 @@ class CheezoidDrive():
         
     def _move(self, rotation_distance, drive_distance):
         while True:
-            logging.debug("\tSending: move({0},{1})".format(rotation_distance, drive_distance))
+            print("\tSending: move({0},{1})".format(rotation_distance, drive_distance))
             reply_sum = 0
             reply = [] 
             reply.extend(self._send(rotation_distance))

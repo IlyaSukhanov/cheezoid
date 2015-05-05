@@ -8,8 +8,10 @@ from rasp_controller.pen import (
 )
 import time
 
-TICKS_PER_CM = 48 / 1.37
-TICKS_PER_DEGREE = 94 / 90.0
+WHEEL_CIRCUMFERENCE = 4.2 * 3.1415
+TICKS_PER_ROTATION = 447.0
+TICKS_PER_CM = TICKS_PER_ROTATION / WHEEL_CIRCUMFERENCE
+TICKS_PER_DEGREE = 1057.0 / 360.0
 DEGREE_IN_RADIAN = 0.0174532925
 MAX_SUPPORTED_DEGREE = 90
 TOTAL_DEGREES = 360
@@ -94,13 +96,12 @@ class Cheezoid(object):
         print("out degrees:{0}".format(angle_degrees))
 
         angle_ticks = int(-angle_degrees * TICKS_PER_DEGREE)
+        print("distance: {0}*{1}=".format(distance_cm, TICKS_PER_CM, int(distance_cm * TICKS_PER_CM)))
         distance_ticks = int(distance_cm * TICKS_PER_CM)
         pen_state = PEN_UP if (self._pen_state == FrontCommands.UP) else PEN_DOWN
 
-        with CheezoidPenControl(mode=PEN_DOWN_HARD):
-            self._cheezoid_drive.move(angle_ticks, 0)
-        with CheezoidPenControl(mode=pen_state):
-            self._cheezoid_drive.move(0, distance_ticks)
+        #with CheezoidPenControl(mode=pen_state):
+        self._cheezoid_drive.move(angle_ticks, distance_ticks)
         print('cheezoid is now at coord: %s' % ",".join(map(str, self.where_am_i())))
 
     def move_pen(self, direction):
