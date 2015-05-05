@@ -13,9 +13,9 @@ int left_speed = 0;
 int right_speed = 0;
 int max_stop_speed = 0;
 
-#define NOMINAL_SPEED 170
-#define SLOW_SPEED 170
-#define MIN_SPEED 120
+#define NOMINAL_SPEED 240
+#define SLOW_SPEED 240
+#define MIN_SPEED 200
 #define SPEED_ADJUST 1
 
 int nominal_period = 0;
