@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
         i++;
     }
     */
-    move(0,9999);
+    //move(1057,0);
     int *move_parameters = 0;
     while(1){
         move_parameters = read_spi_buffer();

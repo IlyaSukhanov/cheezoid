@@ -45,10 +45,10 @@ int *read_spi_buffer(){
 }
 
 void configure_command_control(){
-    TRISBbits.TRISB9 = 1;
     TRISBbits.TRISB10 = 1;
-    TRISBbits.TRISB14 = 1;
-    TRISBbits.TRISB11 = 0;
+    TRISBbits.TRISB11 = 1;
+    TRISBbits.TRISB13 = 1;
+    TRISBbits.TRISB12 = 0;
 
     CloseSPI1();
 
