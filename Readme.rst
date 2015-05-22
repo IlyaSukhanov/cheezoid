@@ -2,9 +2,11 @@ Cheezoid
 ========
 
 Cheezoid is a robot which draws on a whiteboard. Think `turtle graphics`_ in
-meatspace. Its an Amplify Maker Days Project.
+meatspace. It was originally an Amplify Maker Days project but has since been
+open sourced under `apache 2.0 license`_.
 
 .. _turtle graphics: http://en.wikipedia.org/wiki/Turtle_graphics
+.. _apache 2.0 license: http://www.apache.org/licenses/LICENSE-2.0
 
 Overview
 --------
